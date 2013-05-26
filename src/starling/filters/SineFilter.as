@@ -80,7 +80,6 @@ package starling.filters
             // vertex attribute 1:   texture coordinates (FLOAT_2)
             // texture 0:            input texture
             
-			// thank you, Daniel Sperl! ( http://forum.starling-framework.org/topic/new-feature-filters/page/2 )
             mQuantifiers[0] = mFreq;
             mQuantifiers[1] = mAmount * RADIAN;
             
