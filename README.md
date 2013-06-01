@@ -27,3 +27,6 @@ http://onebyonedesign.com/flash/starling/greenscreen/
 
 NewsprintFilter:
 http://onebyonedesign.com/flash/starling/newsprint/
+
+GlassFilter:
+http://onebyonedesign.com/flash/starling/glass/
