@@ -36,3 +36,6 @@ http://onebyonedesign.com/flash/starling/hex/
 
 A Second Spotlight filter (Spotlight2Filter.as) allows change in light color: 
 http://onebyonedesign.com/flash/starling/spot2/
+
+FlashlightFilter:
+http://onebyonedesign.com/flash/starling/flashlight/
