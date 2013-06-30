@@ -33,3 +33,6 @@ http://onebyonedesign.com/flash/starling/glass/
 
 HexFilter (Note: if using Chrome browser this doesn't work properly in 'Pepperflash'):
 http://onebyonedesign.com/flash/starling/hex/
+
+A Second Spotlight filter (Spotlight2Filter.as) allows change in light color: 
+http://onebyonedesign.com/flash/starling/spot2/
