@@ -39,3 +39,6 @@ http://onebyonedesign.com/flash/starling/spot2/
 
 FlashlightFilter:
 http://onebyonedesign.com/flash/starling/flashlight/
+
+ScratchedFilmFilter:
+http://onebyonedesign.com/flash/starling/scratchedfilm/
