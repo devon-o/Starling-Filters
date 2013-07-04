@@ -1,5 +1,5 @@
 /**
- *	Copyright (c) 2012 Devon O. Wolfgang
+ *	Copyright (c) 2013 Devon O. Wolfgang
  *
  *	Permission is hereby granted, free of charge, to any person obtaining a copy
  *	of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@ package starling.filters
     import starling.textures.Texture;
     
 	/**
-	 * Creates a sine wave effect
+	 * Creates a sine wave effect in horizontal or vertical direction. Use the ticker value to animate.
 	 * @author Devon O.
 	 */
 	
@@ -37,27 +37,38 @@ package starling.filters
 		private static const FRAGMENT_SHADER:String =
 	<![CDATA[
 		mov ft0, v0
-		mul ft1.x, v0.y, fc0.x
-		sin ft1.y, ft1.x
-		mul ft1.y, ft1.y, fc0.y
+		sub ft1.x, v0.y, fc0.z
+		mul ft1.x, ft1.x, fc0.w
+		sin ft1.x, ft1.x
+		mul ft1.x, ft1.x, fc0.y
+		
+		// horizontal
+		mul ft1.y, ft1.x, fc1.x
 		add ft0.x, ft0.x, ft1.y
-		tex oc, ft0, fs0<2d, clamp, linear, mipnone>
+		
+		// vertical
+		mul ft1.z, ft1.x, fc1.y
+		add ft0.y, ft0.y, ft1.z
+
+		tex oc, ft0, fs0<2d, wrap, linear, mipnone>
 	]]>
 		
         private var mQuantifiers:Vector.<Number> = new <Number>[1, 1, 1, 1];
-        private var mAmount:Number;
-		private var mFreq:int;
+		private var mBooleans:Vector.<Number> = new <Number>[1, 1, 1, 1];
+		
+        private var _amplitude:Number
+		private var _amount:Number;
+		private var _ticker:Number;
+		private var _frequency:Number;
+		private var _isHorizontal:Boolean = true;
+		
         private var mShaderProgram:Program3D;
         
-		/**
-		 * 
-		 * @param	freq	frequency of wave
-		 * @param	amount	size of wave
-		 */
-        public function SineFilter(freq:int = 0, amount:Number = 0.0)
+        public function SineFilter(amplitude:Number = 0.0, frequency:Number = 0.0, ticker:Number = 0.0)
         {
-           mFreq = freq;
-		   mAmount = amount;
+           this._amplitude = amplitude;
+		   this._ticker = ticker;
+		   this._frequency = frequency;
         }
         
         public override function dispose():void
@@ -73,26 +84,28 @@ package starling.filters
         
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-            // already set by super class:
-            //
-            // vertex constants 0-3: mvpMatrix (3D)
-            // vertex attribute 0:   vertex position (FLOAT_2)
-            // vertex attribute 1:   texture coordinates (FLOAT_2)
-            // texture 0:            input texture
-            
-            mQuantifiers[0] = mFreq;
-            mQuantifiers[1] = mAmount * RADIAN;
+            mQuantifiers[1] = this._amplitude / texture.height;
+			mQuantifiers[2] = this._ticker;
+			mQuantifiers[3] = this._frequency ;
+			
+			mBooleans[0] = int(_isHorizontal);
+			mBooleans[1] = int(!_isHorizontal);
             
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mQuantifiers, 1);
+			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mBooleans, 1);
             context.setProgram(mShaderProgram);
         }
         
-        public function get freq():int { return mFreq; }
-        public function set freq(value:int):void { mFreq = value; }
+        public function get amplitude():Number { return this._amplitude; }
+        public function set amplitude(value:Number):void { this._amplitude = value; }
 		
-		public function get amount():Number { return mAmount; }
-        public function set amount(value:Number):void { mAmount = value; }
+		public function get ticker():Number { return this._ticker; }
+		public function set ticker(value:Number):void { this._ticker = value; }
 		
-		private const RADIAN:Number = Math.PI / 180;
+		public function get frequency():Number { return this._frequency; }
+        public function set frequency(value:Number):void { this._frequency = value; }
+		
+		public function get isHorizontal():Boolean { return this._isHorizontal; }
+		public function set isHorizontal(value:Boolean):void { this._isHorizontal = value; }
     }
 }
