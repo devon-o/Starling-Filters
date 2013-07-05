@@ -1,20 +1,20 @@
 /**
- *	Copyright (c) 2013 Devon O. Wolfgang
+ *	CopymRight (c) 2013 Devon O. Wolfgang
  *
  *	Permission is hereby granted, free of charge, to any person obtaining a copy
  *	of this software and associated documentation files (the "Software"), to deal
- *	in the Software without restriction, including without limitation the rights
+ *	in the Software without restriction, including without limitation the mRights
  *	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *	copies of the Software, and to permit persons to whom the Software is
  *	furnished to do so, subject to the following conditions:
  *
- *	The above copyright notice and this permission notice shall be included in
+ *	The above copymRight notice and this permission notice shall be included in
  *	all copies or substantial portions of the Software.
  *
  *	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *	AUTHORS OR COPYmRight HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  *	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *	THE SOFTWARE.
@@ -29,7 +29,7 @@ package starling.filters
 	import starling.textures.Texture;
 	
 	/**
-	 * Warps a display object with bezier curves (4 anchor points on left edge of image, 4 anchor points on right edge of image)
+	 * Warps a display object with bezier curves (4 anchor points on mLeft edge of image, 4 anchor points on mRight edge of image)
 	 * @author Devon O.
 	 */
 
@@ -78,9 +78,9 @@ package starling.filters
 	]]>
 		
 		
-		private var left:Vector.<Number>		= new <Number>[0.0, 0.0, 0.0, 0.0];
-		private var right:Vector.<Number>		= new <Number>[1.0, 1.0, 1.0, 1.0];
-		private var data:Vector.<Number>		= new <Number>[1.0, 2.0, 3.0, 0.0];
+		private var mLeft:Vector.<Number>		= new <Number>[0.0, 0.0, 0.0, 0.0];
+		private var mRight:Vector.<Number>		= new <Number>[1.0, 1.0, 1.0, 1.0];
+		private var mVars:Vector.<Number>		= new <Number>[1.0, 2.0, 3.0, 0.0];
 		
 		private var mShaderProgram:Program3D;
 		
@@ -100,16 +100,9 @@ package starling.filters
         
 		protected override function activate(pass:int, context:Context3D, texture:Texture):void
 		{
-			// already set by super class:
-			// 
-			// vertex constants 0-3: mvpMatrix (3D)
-			// vertex attribute 0:   vertex position (FLOAT_2)
-			// vertex attribute 1:   texture coordinates (FLOAT_2)
-			// texture 0:            input texture
-            
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, left,  1);
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, right, 1);
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, data,  1);
+			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mLeft,  1);
+			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mRight, 1);
+			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, mVars,  1);
 			context.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
 			context.setProgram(mShaderProgram);
 		}
@@ -119,31 +112,31 @@ package starling.filters
 			context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO);
 		}
 		
-		// Left
-		public function get l1():Number { return left[0]; }
-		public function set l1(value:Number):void { left[0] = value; }
+		// mLeft
+		public function get l1():Number { return mLeft[0]; }
+		public function set l1(value:Number):void { mLeft[0] = value; }
 		
-		public function get l2():Number { return left[1]; }
-		public function set l2(value:Number):void { left[1] = value; }
+		public function get l2():Number { return mLeft[1]; }
+		public function set l2(value:Number):void { mLeft[1] = value; }
 		
-		public function get l3():Number { return left[2]; }
-		public function set l3(value:Number):void { left[2] = value; }
+		public function get l3():Number { return mLeft[2]; }
+		public function set l3(value:Number):void { mLeft[2] = value; }
 		
-		public function get l4():Number { return left[3]; }
-		public function set l4(value:Number):void { left[3] = value; }
+		public function get l4():Number { return mLeft[3]; }
+		public function set l4(value:Number):void { mLeft[3] = value; }
 		
-		// Right
-		public function get r1():Number { return right[0]; }
-		public function set r1(value:Number):void { right[0] = value; }
+		// mRight
+		public function get r1():Number { return mRight[0]; }
+		public function set r1(value:Number):void { mRight[0] = value; }
 		
-		public function get r2():Number { return right[1]; }
-		public function set r2(value:Number):void { right[1] = value; }
+		public function get r2():Number { return mRight[1]; }
+		public function set r2(value:Number):void { mRight[1] = value; }
 		
-		public function get r3():Number { return right[2]; }
-		public function set r3(value:Number):void { right[2] = value; }
+		public function get r3():Number { return mRight[2]; }
+		public function set r3(value:Number):void { mRight[2] = value; }
 		
-		public function get r4():Number { return right[3]; }
-		public function set r4(value:Number):void { right[3] = value; }
+		public function get r4():Number { return mRight[3]; }
+		public function set r4(value:Number):void { mRight[3] = value; }
 		
 	}
 }

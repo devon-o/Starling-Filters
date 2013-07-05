@@ -23,52 +23,52 @@
 package starling.filters
 {
 	import flash.display3D.Context3D;
-	import flash.display3D.Context3DBlendFactor;
 	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Program3D;
 	import starling.textures.Texture;
     
 	/**
-	 * Creates a 'God Rays' / fake volumetric light filter effect. Only use with Context3DProfile.BASELINE (not compatible with constrained profile)
+	 * Creates a 'God Rays' / fake volumetric light filter effect.
+	 * Only use with Context3DProfile.BASELINE (not compatible with constrained profile)
 	 * @author Devon O.
 	 */
 	
     public class GodRaysFilter extends FragmentFilter
     {
         
-		private var shaderProgram:Program3D;
+		private var mShaderProgram:Program3D;
 		
-		private var numSteps:int;
+		private var mNumSteps:int;
 		
 		// lightx, lighty
-		private var lightPos:Vector.<Number> = Vector.<Number>( [ .5, .5, 1, 1 ]);
+		private var mLightPos:Vector.<Number> = Vector.<Number>( [ .5, .5, 1, 1 ]);
 		
 		// numsamples, density, numsamples * density, 1 / numsamples * density
-		private var values1:Vector.<Number> = Vector.<Number>( [ 1, 1, 1, 1 ]);
+		private var mVars1:Vector.<Number> = Vector.<Number>( [ 1, 1, 1, 1 ]);
 		
 		// weight, decay, exposure
-		private var values2:Vector.<Number> = Vector.<Number>( [ 1, 1, 1, 1 ]);
+		private var mVars2:Vector.<Number> = Vector.<Number>( [ 1, 1, 1, 1 ]);
 		
 		
-		private var _lightX:Number 		= 0;
-		private var _lightY:Number		= 0;
-		private var _weight:Number		= .50;
-		private var _decay:Number		= .87;
-		private var _exposure:Number	= .35;
-		private var _density:Number		= 2.0;
+		private var mLightX:Number 		= 0.0;
+		private var mLightY:Number		= 0.0;
+		private var mWeight:Number		= .50;
+		private var mDecay:Number		= .87;
+		private var mExposure:Number	= .35;
+		private var mDensity:Number		= 2.0;
         
 		/**
 		 * 
-		 * @param	numSteps	Number of samples to take along the ray path
+		 * @param	numSteps	Number of samples to take along the ray path (maximum 32 with Context3DProfile.BASELINE)
 		 */
-        public function GodRaysFilter(numSteps:int = 30)
+        public function GodRaysFilter(numSteps:int=30)
         {
-			this.numSteps = numSteps;
+			mNumSteps = numSteps;
         }
         
         public override function dispose():void
         {
-            if (this.shaderProgram) this.shaderProgram.dispose();
+            if (mShaderProgram) mShaderProgram.dispose();
             super.dispose();
         }
         
@@ -91,7 +91,7 @@ package starling.filters
 			// Store the texcoords
 			frag += "mov ft4.xy, v0.xy \n";
 			
-			for (var i:int = 0; i < this.numSteps; i++)
+			for (var i:int = 0; i < mNumSteps; i++)
 			{
 				// Step sample location along ray. 
 				frag += "sub ft4.xy, ft4.xy, ft0.xy \n";
@@ -114,51 +114,51 @@ package starling.filters
 			frag += "mul ft1.xyz, ft1.xyz, fc2.zzz \n";
 			frag += "mov oc, ft1";
 				
-            this.shaderProgram = assembleAgal(frag);
+            mShaderProgram = assembleAgal(frag);
         }
         
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {		
 			// light position
-			this.lightPos[0] = this._lightX / texture.width;
-			this.lightPos[1] = this._lightY / texture.height;
+			mLightPos[0] = mLightX / texture.width;
+			mLightPos[1] = mLightY / texture.height;
 			
 			// numsamples, density, numsamples * density, 1 / numsamples * density
-			this.values1[0] = this.numSteps;
-			this.values1[1] = this._density;
-			this.values1[2] = this.numSteps * values1[1];
-			this.values1[3] = 1 / values1[2];
+			mVars1[0] = mNumSteps;
+			mVars1[1] = mDensity;
+			mVars1[2] = mNumSteps * mVars1[1];
+			mVars1[3] = 1 / mVars1[2];
 			
 			// weight, decay, exposure
-			this.values2[0] = this._weight;
-			this.values2[1] = this._decay;
-			this.values2[2] = this._exposure;
+			mVars2[0] = mWeight;
+			mVars2[1] = mDecay;
+			mVars2[2] = mExposure;
 			
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, this.lightPos, 1 );	
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, this.values1,  1 );
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, this.values2,  1 );
+			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mLightPos, 	1 );	
+			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mVars1,  	1 );
+			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, mVars2,  	1 );
 			
-            context.setProgram(this.shaderProgram);
+            context.setProgram(mShaderProgram);
 			
         }
 		
-		public function set lightX(value:Number):void { this._lightX = value; }
-		public function get lightX():Number { return this._lightX; }
+		public function set x(value:Number):void { mLightX = value; }
+		public function get x():Number { return mLightX; }
 		
-		public function set lightY(value:Number):void { this._lightY = value; }
-		public function get lightY():Number { return this._lightY; }
+		public function set y(value:Number):void { mLightY = value; }
+		public function get y():Number { return mLightY; }
 		
-		public function set decay(value:Number):void { this._decay = value; }
-		public function get decay():Number { return this._decay; }
+		public function set decay(value:Number):void { mDecay = value; }
+		public function get decay():Number { return mDecay; }
 		
-		public function set exposure(value:Number):void { this._exposure = value; }
-		public function get exposure():Number { return this._exposure; }
+		public function set exposure(value:Number):void { mExposure = value; }
+		public function get exposure():Number { return mExposure; }
 		
-		public function set weight(value:Number):void { this._weight = value; }
-		public function get weight():Number { return this._weight; }
+		public function set weight(value:Number):void { mWeight = value; }
+		public function get weight():Number { return mWeight; }
 		
-		public function set density(value:Number):void { this._density = value; }
-		public function get density():Number { return this._density; }
+		public function set density(value:Number):void { mDensity = value; }
+		public function get density():Number { return mDensity; }
 		
     }
 }

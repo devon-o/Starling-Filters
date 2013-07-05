@@ -22,13 +22,13 @@
 
 package starling.filters
 {
-    import flash.display3D.Context3D;
-    import flash.display3D.Context3DProgramType;
-    import flash.display3D.Program3D;
-    import starling.textures.Texture;
+	import flash.display3D.Context3D;
+	import flash.display3D.Context3DProgramType;
+	import flash.display3D.Program3D;
+	import starling.textures.Texture;
     
 	/**
-	 * Creates a tiled glass effect
+	 * Creates a tiled glass distortion effect
 	 * @author Devon O.
 	 */
 	
@@ -47,17 +47,18 @@ package starling.filters
 		tex oc, ft0.xy, fs0<2d, clamp, linear, mipnone>
 	]]>
 		
-        private var mQuantifiers:Vector.<Number> = new <Number>[1, 1, 1, 1];
-        private var mAmount:Number;
-		private var mRipple:Number;
+        private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
         private var mShaderProgram:Program3D;
+		
+		private var mAmount:Number;
+		private var mRipple:Number;
         
 		/**
 		 * 
 		 * @param	amount		Amount of effect (0 - 1)
 		 * @param	ripple		Amount of ripple to apply
 		 */
-        public function GlassFilter(amount:Number = 0.0, ripple:Number = 0.0)
+        public function GlassFilter(amount:Number=0.0, ripple:Number=0.0)
         {
            mAmount = amount;
 		   mRipple = ripple;
@@ -76,23 +77,17 @@ package starling.filters
         
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-            // already set by super class:
-            //
-            // vertex constants 0-3: mvpMatrix (3D)
-            // vertex attribute 0:   vertex position (FLOAT_2)
-            // vertex attribute 1:   texture coordinates (FLOAT_2)
-            // texture 0:            input texture
-			
-            mQuantifiers[0] = mAmount / 100;
-            mQuantifiers[1] = mRipple ;
+            mVars[0] = mAmount / 100;
+            mVars[1] = mRipple ;
             
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mQuantifiers, 1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars, 1);
             context.setProgram(mShaderProgram);
         }
         
         public function get ripple():Number { return mRipple; }
         public function set ripple(value:Number):void { mRipple = value; }
 		
+		/** 0 - 1 */
 		public function get amount():Number { return mAmount; }
         public function set amount(value:Number):void { mAmount = value; }
     }

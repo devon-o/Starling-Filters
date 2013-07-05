@@ -63,13 +63,13 @@ package starling.filters
 		private var mLightColor:Vector.<Number> = new <Number>[1, 1, 1, 0];
 		private var mShaderProgram:Program3D;
  
-		private var _x:Number;
-		private var _y:Number;
-		private var _radius:Number;
-		private var _corona:Number;
-		private var _red:Number=1.0;
-		private var _green:Number=1.0;
-		private var _blue:Number = 1.0;
+		private var mX:Number;
+		private var mY:Number;
+		private var mRadius:Number;
+		private var mCorona:Number;
+		private var mRed:Number=1.0;
+		private var mGreen:Number=1.0;
+		private var mBlue:Number = 1.0;
 		
 		/**
 		 * 
@@ -78,12 +78,12 @@ package starling.filters
 		 * @param	radius	radius of spotlight (0 - 1)
 		 * @param	corona	"softness" of spotlight
 		 */
-		public function Spotlight2Filter(x:Number = 0.0, y:Number = 0.0, radius:Number = .25, corona:Number = 2 )
+		public function Spotlight2Filter(x:Number=0.0, y:Number=0.0, radius:Number=.25, corona:Number=2.0)
 		{
-			_x 		= x;
-			_y 		= y;
-			_radius	= radius;
-			_corona	= corona;
+			mX 		= x;
+			mY 		= y;
+			mRadius	= radius;
+			mCorona	= corona;
 		}
  
 		public override function dispose():void
@@ -99,17 +99,17 @@ package starling.filters
  
 		protected override function activate(pass:int, context:Context3D, texture:Texture):void
 		{
-			mCenter[0] = _x / texture.width;
-			mCenter[1] = _y / texture.height;
-			mCenter[2] = _radius;
-			mCenter[3] = _corona;
+			mCenter[0] = mX / texture.width;
+			mCenter[1] = mY / texture.height;
+			mCenter[2] = mRadius;
+			mCenter[3] = mCorona;
 			
 			// texture ratio to produce rounded lights on rectangular textures
 			mVars[3] = texture.height / texture.width;
 			
-			mLightColor[0] = _red;
-			mLightColor[1] = _green;
-			mLightColor[2] = _blue;
+			mLightColor[0] = mRed;
+			mLightColor[1] = mGreen;
+			mLightColor[2] = mBlue;
 			
 			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mCenter, 1);
 			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mVars,   1);
@@ -117,25 +117,25 @@ package starling.filters
 			context.setProgram(mShaderProgram);
         }
  
-		public function get x():Number { return _x; }
-		public function set x(value:Number):void { _x = value; }
+		public function get x():Number { return mX; }
+		public function set x(value:Number):void { mX = value; }
  
-		public function get y():Number { return _y; }
-		public function set y(value:Number):void { _y = value; }
+		public function get y():Number { return mY; }
+		public function set y(value:Number):void { mY = value; }
  
-		public function get corona():Number { return _corona; }
-		public function set corona(value:Number):void { _corona = value; }
+		public function get corona():Number { return mCorona; }
+		public function set corona(value:Number):void { mCorona = value; }
  
-		public function get radius():Number { return _radius; }
-		public function set radius(value:Number):void { _radius = value; }
+		public function get radius():Number { return mRadius; }
+		public function set radius(value:Number):void { mRadius = value; }
  
-		public function get red():Number { return _red; }
-		public function set red(value:Number):void { _red = value; }
+		public function get red():Number { return mRed; }
+		public function set red(value:Number):void { mRed = value; }
 		
-		public function get green():Number { return _green; }
-		public function set green(value:Number):void { _green = value; }
+		public function get green():Number { return mGreen; }
+		public function set green(value:Number):void { mGreen = value; }
 		
-		public function get blue():Number { return _blue; }
-		public function set blue(value:Number):void { _blue = value; }
+		public function get blue():Number { return mBlue; }
+		public function set blue(value:Number):void { mBlue = value; }
     }
 }

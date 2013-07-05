@@ -57,13 +57,11 @@ package starling.filters
 		mov ft6.w, ft1.w
 		mov oc, ft6
 	]]>
-		
-		
+	
 		private var mCenter:Vector.<Number> = new <Number>[1, 1, 1, 1];
 		private var mVars:Vector.<Number> = new <Number>[.50, .50, .50, .50];
-		private var mPixelSize:int;
 		private var mShaderProgram:Program3D;
- 
+		
 		private var mCenterX:Number;
 		private var mCenterY:Number;
 		private var mAmount:Number;
@@ -80,7 +78,7 @@ package starling.filters
 		 * @param	size		the size of the effect
 		 * @param	useFlicker	creates a flickering light effect
 		 */
-		public function SpotlightFilter(cx:Number = 0.0, cy:Number = 0.0, amount:Number = 1.0, radius:Number = .25, size:Number = .25, useFlicker:Boolean = false )
+		public function SpotlightFilter(cx:Number=0.0, cy:Number=0.0, amount:Number=1.0, radius:Number=.25, size:Number=.25, useFlicker:Boolean=false)
 		{
 			mCenterX	= cx;
 			mCenterY	= cy;
@@ -103,13 +101,6 @@ package starling.filters
  
 		protected override function activate(pass:int, context:Context3D, texture:Texture):void
 		{
-			// already set by super class:
-			//
-			// vertex constants 0-3: mvpMatrix (3D)
-			// vertex attribute 0:   vertex position (FLOAT_2)
-			// vertex attribute 1:   texture coordinates (FLOAT_2)
-			// texture 0:            input texture
- 
 			var halfSize:Number = mSize * .50;
 			var cx:Number = mCenterX / texture.width - halfSize;
 			var cy:Number = mCenterY / texture.height - halfSize;

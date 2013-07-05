@@ -22,20 +22,20 @@
 
 package starling.filters
 {
-    import flash.display3D.Context3D;
-    import flash.display3D.Context3DProgramType;
-    import flash.display3D.Program3D;
-    import starling.textures.Texture;
+	import flash.display3D.Context3D;
+	import flash.display3D.Context3DProgramType;
+	import flash.display3D.Program3D;
+	import starling.textures.Texture;
 	
 	/**
 	 * Motion Blur filter for Starling Framework.
-	 * NOTE: This filter is only supported in 'baseline' profiles - NOT 'baselineConstrained'
+	 * Only use with Context3DProfile.BASELINE (not compatible with constrained profile).
 	 * @author Devon O.
 	 */
     
     public class MotionBlurFilter extends FragmentFilter
     {
-        private var mQuantifiers:Vector.<Number> = new <Number>[1, 1, 1, 1];
+        private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
         private var mShaderProgram:Program3D;
 		
 		private var mSteps:int;
@@ -48,7 +48,7 @@ package starling.filters
 		 * @param	amount	the amount of blur
 		 * @param	steps	the level of the blur. A higher number produces a better result, but with worse performance. Can only be set once.
 		 */
-        public function MotionBlurFilter(angle:Number = 0.0, amount:Number = 1.0, steps:int = 5)
+        public function MotionBlurFilter(angle:Number=0.0, amount:Number=1.0, steps:int=5)
         {
 			mAngle	= angle;
 			mAmount	= clamp(amount, 0.0, 20.0);
@@ -98,20 +98,13 @@ package starling.filters
         
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-            // already set by super class:
-            //
-            // vertex constants 0-3: mvpMatrix (3D)
-            // vertex attribute 0:   vertex position (FLOAT_2)
-            // vertex attribute 1:   texture coordinates (FLOAT_2)
-            // texture 0:            input texture
-            
 			var tSize:Number = (texture.width + texture.height) * .50;
-            mQuantifiers[0] = mAngle;
-            mQuantifiers[1] = mAmount;
-			mQuantifiers[2] = mSteps;
-            mQuantifiers[3] = 1 / tSize;
+            mVars[0] = mAngle;
+            mVars[1] = mAmount;
+			mVars[2] = mSteps;
+            mVars[3] = 1 / tSize;
             
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mQuantifiers, 1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars, 1);
             context.setProgram(mShaderProgram);
         }
 		

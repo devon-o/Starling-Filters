@@ -22,12 +22,11 @@
 
 package starling.filters
 {
-    import flash.display3D.Context3D;
+	import flash.display3D.Context3D;
 	import flash.display3D.Context3DBlendFactor;
-    import flash.display3D.Context3DProgramType;
-    import flash.display3D.Program3D;
-	import flash.display3D.textures.TextureBase;
-    import starling.textures.Texture;
+	import flash.display3D.Context3DProgramType;
+	import flash.display3D.Program3D;
+	import starling.textures.Texture;
 	
 	/**
 	 * The ChromakeyFilter will 'key out' a specified color (setting its alpha to 0)
@@ -54,9 +53,10 @@ package starling.filters
 	]]>
         
         private var mShaderProgram:Program3D;
+		private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
+		
 		private var mColor:ColorObject;
 		private var mThreshold:Number;
-		private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
         
 		/**
 		 * @param	color		The color to remove
@@ -81,13 +81,6 @@ package starling.filters
         
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-            // already set by super class:
-            //
-            // vertex constants 0-3: mvpMatrix (3D)
-            // vertex attribute 0:   vertex position (FLOAT_2)
-            // vertex attribute 1:   texture coordinates (FLOAT_2)
-            // texture 0:            input texture
-			
 			mVars[0] = mColor.r;
 			mVars[1] = mColor.g;
 			mVars[2] = mColor.b;

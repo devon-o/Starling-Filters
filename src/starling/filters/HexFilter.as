@@ -25,10 +25,11 @@ package starling.filters
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Program3D;
-	import starling.textures.Texture;   
+	import starling.textures.Texture;
     
 	/**
-	 * Pixelates images (hex shaped 'pixels'). Only use with Context3DProfile.BASELINE (not compatible with constrained profile).
+	 * Pixelates images (hex shaped 'pixels').
+	 * Only use with Context3DProfile.BASELINE (not compatible with constrained profile).
 	 * @author Devon O.
 	 */
 	
@@ -72,7 +73,7 @@ package starling.filters
 		
         private var mShaderProgram:Program3D;
         private var mSize:int;
-		private var data:Vector.<Number> = new <Number>[1.7320508076, 0.866025404, 1.0, .50];
+		private var mVars:Vector.<Number> = new <Number>[1.7320508076, 0.866025404, 1.0, .50];
 		
 		/**
 		 * 
@@ -96,17 +97,10 @@ package starling.filters
         
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-            // already set by super class:
-            //
-            // vertex constants 0-3: mvpMatrix (3D)
-            // vertex attribute 0:   vertex position (FLOAT_2)
-            // vertex attribute 1:   texture coordinates (FLOAT_2)
-            // texture 0:            input texture
-			
 			// average out width and height of texture
-			this.data[2] = Number(this.mSize / ((texture.height + texture.width) * .50));
+			this.mVars[2] = Number(this.mSize / ((texture.height + texture.width) * .50));
 
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, this.data, 1);
+			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, this.mVars, 1);
             context.setProgram(mShaderProgram);
         }
 		

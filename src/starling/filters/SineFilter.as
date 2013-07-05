@@ -22,10 +22,10 @@
 
 package starling.filters
 {
-    import flash.display3D.Context3D;
-    import flash.display3D.Context3DProgramType;
-    import flash.display3D.Program3D;
-    import starling.textures.Texture;
+	import flash.display3D.Context3D;
+	import flash.display3D.Context3DProgramType;
+	import flash.display3D.Program3D;
+	import starling.textures.Texture;
     
 	/**
 	 * Creates a sine wave effect in horizontal or vertical direction. Use the ticker value to animate.
@@ -53,22 +53,26 @@ package starling.filters
 		tex oc, ft0, fs0<2d, wrap, linear, mipnone>
 	]]>
 		
-        private var mQuantifiers:Vector.<Number> = new <Number>[1, 1, 1, 1];
+        private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
 		private var mBooleans:Vector.<Number> = new <Number>[1, 1, 1, 1];
+		private var mShaderProgram:Program3D;
 		
-        private var _amplitude:Number
-		private var _amount:Number;
-		private var _ticker:Number;
-		private var _frequency:Number;
-		private var _isHorizontal:Boolean = true;
+        private var mAmplitude:Number
+		private var mTicker:Number;
+		private var mFrequency:Number;
+		private var mIsHorizontal:Boolean = true;
 		
-        private var mShaderProgram:Program3D;
-        
-        public function SineFilter(amplitude:Number = 0.0, frequency:Number = 0.0, ticker:Number = 0.0)
+		/**
+		 * 
+		 * @param	amplitude	wave amplitude
+		 * @param	frequency	wave frequency
+		 * @param	ticker		position of effect (use to animate)
+		 */
+        public function SineFilter(amplitude:Number=0.0, frequency:Number=0.0, ticker:Number=0.0)
         {
-           this._amplitude = amplitude;
-		   this._ticker = ticker;
-		   this._frequency = frequency;
+			mAmplitude	= amplitude;
+			mTicker		= ticker;
+			mFrequency	= frequency;
         }
         
         public override function dispose():void
@@ -84,28 +88,28 @@ package starling.filters
         
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-            mQuantifiers[1] = this._amplitude / texture.height;
-			mQuantifiers[2] = this._ticker;
-			mQuantifiers[3] = this._frequency ;
+			mVars[1] = mAmplitude / texture.height;
+			mVars[2] = mTicker;
+			mVars[3] = mFrequency ;
 			
-			mBooleans[0] = int(_isHorizontal);
-			mBooleans[1] = int(!_isHorizontal);
+			mBooleans[0] = int(mIsHorizontal);
+			mBooleans[1] = int(!mIsHorizontal);
             
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mQuantifiers, 1);
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mBooleans, 1);
-            context.setProgram(mShaderProgram);
+			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars,		1);
+			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mBooleans,	1);
+			context.setProgram(mShaderProgram);
         }
         
-        public function get amplitude():Number { return this._amplitude; }
-        public function set amplitude(value:Number):void { this._amplitude = value; }
+        public function get amplitude():Number { return mAmplitude; }
+        public function set amplitude(value:Number):void { mAmplitude = value; }
 		
-		public function get ticker():Number { return this._ticker; }
-		public function set ticker(value:Number):void { this._ticker = value; }
+		public function get ticker():Number { return mTicker; }
+		public function set ticker(value:Number):void { mTicker = value; }
 		
-		public function get frequency():Number { return this._frequency; }
-        public function set frequency(value:Number):void { this._frequency = value; }
+		public function get frequency():Number { return mFrequency; }
+        public function set frequency(value:Number):void { mFrequency = value; }
 		
-		public function get isHorizontal():Boolean { return this._isHorizontal; }
-		public function set isHorizontal(value:Boolean):void { this._isHorizontal = value; }
+		public function get isHorizontal():Boolean { return mIsHorizontal; }
+		public function set isHorizontal(value:Boolean):void { mIsHorizontal = value; }
     }
 }

@@ -28,7 +28,8 @@ package starling.filters
 	import starling.textures.Texture;
 	
 	/**
-	 * A pointed flash light effect. Only use with Context3DProfile.BASELINE (not compatible with constrained profile)
+	 * A pointed flash light / light cone effect.
+	 * Only use with Context3DProfile.BASELINE (not compatible with constrained profile)
 	 * @author Devon O.
 	 */
 	
@@ -116,8 +117,14 @@ package starling.filters
 		private var mOuterCone:Number = 10.0;
 		private var mInnerCone:Number = 50.0;
 		private var mAzimuth:Number = 0.0;
- 
-		public function FlashlightFilter(x:Number = 0, y:Number = 0, angle:Number = 0.0)
+		
+		/**
+		 * 
+		 * @param	x		x position
+		 * @param	y		y position
+		 * @param	angle	angle (direction) of effect
+		 */
+		public function FlashlightFilter(x:Number=0.0, y:Number=0.0, angle:Number = 0.0)
 		{
 			mX = x;
 			mY = y;

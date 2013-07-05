@@ -68,15 +68,21 @@ package starling.filters
 		mov oc, ft2
 	]]>
 		
-		private var mQuantifiers:Vector.<Number>	= new <Number>[1.0, 1.0, 1.0,  1.0];
-		private var mConstants:Vector.<Number>		= new <Number>[4.0, 5.0, 10.0, 3.0];;
+		private var mVars:Vector.<Number>		= new <Number>[1.0, 1.0, 1.0,  1.0];
+		private var mConstants:Vector.<Number>	= new <Number>[4.0, 5.0, 10.0, 3.0];;
 		private var mShaderProgram:Program3D;
 		
 		private var mSize:Number;
 		private var mScale:Number;
 		private var mAngle:Number;
         
-		public function NewsprintFilter(size:Number = 120.0, scale:Number = 3.0, angleInRadians:Number = 0.0)
+		/**
+		 * 
+		 * @param	size			size of effect (the smaller the value the larger the effect)
+		 * @param	scale			scale of effect (the smaller the value, the larger the effect)
+		 * @param	angleInRadians	angle of effect
+		 */
+		public function NewsprintFilter(size:Number=120.0, scale:Number=3.0, angleInRadians:Number=0.0)
 		{
 			mSize	= size;
 			mScale	= scale;
@@ -96,19 +102,12 @@ package starling.filters
         
 		protected override function activate(pass:int, context:Context3D, texture:Texture):void
 		{
-			// already set by super class:
-			// 
-			// vertex constants 0-3: mvpMatrix (3D)
-			// vertex attribute 0:   vertex position (FLOAT_2)
-			// vertex attribute 1:   texture coordinates (FLOAT_2)
-			// texture 0:            input texture
-            
-			mQuantifiers[0] = mAngle;
-			mQuantifiers[1] = mScale;
-			mQuantifiers[2] = mSize;
+			mVars[0] = mAngle;
+			mVars[1] = mScale;
+			mVars[2] = mSize;
 			
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mQuantifiers, 1);
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mConstants,   1);
+			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars, 		1);
+			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mConstants,	1);
 			context.setProgram(mShaderProgram);
 		}
 		

@@ -22,10 +22,10 @@
 
 package starling.filters
 {
-    import flash.display3D.Context3D;
-    import flash.display3D.Context3DProgramType;
-    import flash.display3D.Program3D;
-    import starling.textures.Texture;
+	import flash.display3D.Context3D;
+	import flash.display3D.Context3DProgramType;
+	import flash.display3D.Program3D;
+	import starling.textures.Texture;
 	
 	/**
 	 * Pixelates images (square 'pixels')
@@ -44,15 +44,16 @@ package starling.filters
 	]]>
 		
 		
-        private var mQuantifiers:Vector.<Number> = new <Number>[1, 1, 1, 1];
+        private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
+		private var mShaderProgram:Program3D;
+		
         private var mPixelSize:int;
-        private var mShaderProgram:Program3D;
         
         /**
          *
-         * @param       pixelSize               size of pixel effect
+         * @param       pixelSize	size of pixel effect
          */
-        public function PixelateFilter(pixelSize:int)
+        public function PixelateFilter(pixelSize:int=8)
         {
             mPixelSize = pixelSize;
         }
@@ -70,17 +71,10 @@ package starling.filters
         
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-            // already set by super class:
-            //
-            // vertex constants 0-3: mvpMatrix (3D)
-            // vertex attribute 0:   vertex position (FLOAT_2)
-            // vertex attribute 1:   texture coordinates (FLOAT_2)
-            // texture 0:            input texture
-			
-            mQuantifiers[0] = mPixelSize / texture.width;
-            mQuantifiers[1] = mPixelSize / texture.height;
+            mVars[0] = mPixelSize / texture.width;
+            mVars[1] = mPixelSize / texture.height;
             
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mQuantifiers, 1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars, 1);
             context.setProgram(mShaderProgram);
         }
         
