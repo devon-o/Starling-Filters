@@ -42,3 +42,6 @@ http://onebyonedesign.com/flash/starling/flashlight/
 
 ScratchedFilmFilter:
 http://onebyonedesign.com/flash/starling/scratchedfilm/
+
+ScanlineFilter:
+http://onebyonedesign.com/flash/starling/scanlines/
