@@ -45,3 +45,6 @@ http://onebyonedesign.com/flash/starling/scratchedfilm/
 
 ScanlineFilter:
 http://onebyonedesign.com/flash/starling/scanlines/
+
+LineGlitchFilter:
+http://onebyonedesign.com/flash/starling/lineglitch/
