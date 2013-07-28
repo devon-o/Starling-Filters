@@ -48,3 +48,6 @@ http://onebyonedesign.com/flash/starling/scanlines/
 
 LineGlitchFilter:
 http://onebyonedesign.com/flash/starling/lineglitch/
+
+PosterizeFilter:
+http://onebyonedesign.com/flash/starling/posterize/
