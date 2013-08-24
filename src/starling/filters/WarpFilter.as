@@ -73,7 +73,9 @@ package starling.filters
 		tex ft5, ft4.xy, fs0<2d, clamp, linear, nomip>
 		sge ft6.x, ft0.x, ft2.x
 		slt ft6.y, ft0.x, ft3.x
+		mov ft6.w, ft5.w
 		mul ft5.w, ft6.x, ft6.y
+		min ft5.w, ft5.w, ft6.w
 		mov oc, ft5
 	]]>
 		
