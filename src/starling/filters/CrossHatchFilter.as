@@ -96,6 +96,7 @@ package starling.filters
         mul ft4.z, ft4.x, ft4.y
 		sub ft2.xyz, ft2.xyz, ft4.zzz
 		
+		mov ft2.w, ft0.w
 		mov oc, ft2
 	]]>
 
@@ -133,8 +134,14 @@ package starling.filters
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars, 1);
 			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mVars2, 1);
 			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, mColor, 1);
+			context.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
             context.setProgram(mShaderProgram);
         }
+		
+		override protected function deactivate(pass:int, context:Context3D, texture:Texture):void 
+		{
+			context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO);
+		}
 		
 		public function get red():Number { return mRed; }
         public function set red(value:Number):void { mRed = value; }
