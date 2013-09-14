@@ -1,5 +1,5 @@
 /**
- *	Copyright (c) 2012 Devon O. Wolfgang
+ *	Copyright (c) 2013 Devon O. Wolfgang
  *
  *	Permission is hereby granted, free of charge, to any person obtaining a copy
  *	of this software and associated documentation files (the "Software"), to deal
@@ -53,6 +53,8 @@ package starling.filters
 			mAngle	= angle;
 			mAmount	= clamp(amount, 0.0, 20.0);
 			mSteps	= int(clamp(steps, 1.0, 30.0));
+			
+			marginX = marginY = mAmount * mSteps ;
         }
         
         public override function dispose():void
@@ -64,51 +66,38 @@ package starling.filters
         protected override function createPrograms():void
         {
 			var step:String = 
-				"add ft1.x, ft1.x, fc0.w \n" +
-				"mul ft2.xy, ft0.xy, ft1.x \n" +
-				"add ft3.xy, v0.xy, ft2.xy \n" +
-				"tex ft5, ft3.xy, fs0<2d, clamp, linear, nomip> \n" +
-				"add ft4, ft4, ft5 \n";
+				"add ft0.xy, ft0.xy, fc0.xy \n"+
+				"tex ft2, ft0.xy, fs0<2d, clamp, linear, nomip> \n" +
+				"add ft1, ft1, ft2 \n"
 			
-            var fragmentProgramCode:String =
-                "mov ft0.y, fc0.x \n" +
-				"sin ft0.y, ft0.y \n" +
-				"mov ft0.x, fc0.x \n" +
-				"cos ft0.x, ft0.x \n" +
-				"mul ft0.xy, ft0.xy, fc0.y \n" +
-				"mov ft1.x, fc0.w \n" +
-				"sub ft1.x, ft1.x, ft1.x \n" +
-				"mul ft2.xy, ft0.xy, ft1.x \n" +
-				"add ft3.xy, v0.xy, ft2.xy \n" +
-				"tex ft4, ft3.xy, fs0<2d, clamp, linear, nomip> \n";
-				
+			var fragmentProgramCode:String = 
+                "mov ft0.xy, v0.xy \n" +
+				"tex ft1, ft0.xy, fs0<2d, clamp, linear, nomip> \n"
+						
 			var numSteps:int = mSteps - 1;
 			for (var i:int = 0; i < numSteps; i++)
 			{
 				fragmentProgramCode += step;
 			}
 			
-			fragmentProgramCode +=
-				"div ft4, ft4, fc0.z \n" +
-				"mov oc, ft4";
+			fragmentProgramCode += "div oc, ft1, fc0.zzz" 
 			
-            
             mShaderProgram = assembleAgal(fragmentProgramCode);
         }
         
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
 			var tSize:Number = (texture.width + texture.height) * .50;
-            mVars[0] = mAngle;
-            mVars[1] = mAmount;
+            mVars[0] = mAmount * Math.cos(mAngle) / tSize;
+            mVars[1] = mAmount * Math.sin(mAngle) / tSize;
 			mVars[2] = mSteps;
-            mVars[3] = 1 / tSize;
             
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars, 1);
             context.setProgram(mShaderProgram);
         }
 		
-		private function clamp(target:Number, min:Number, max:Number):Number {
+		private function clamp(target:Number, min:Number, max:Number):Number 
+		{
 			if (target < min) target = min;
 			if (target > max) target = max;
 			return target;
@@ -118,6 +107,10 @@ package starling.filters
         public function set angle(value:Number):void { mAngle = value; }
 		
 		public function get amount():Number { return mAmount; }
-        public function set amount(value:Number):void { mAmount = value; }
+        public function set amount(value:Number):void 
+		{ 
+			mAmount = clamp(value, 0, 20);
+			marginX = marginY = mAmount * mSteps ;
+		}
     }
 }
