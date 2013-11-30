@@ -22,7 +22,6 @@
 
 package starling.filters
 {
-	import flash.display.BitmapData;
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Program3D;
@@ -81,26 +80,26 @@ package starling.filters
 	]]>
 		
         private var snowVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
-		private var offsetVars:Vector.<Number> = new <Number>[0, 1, 0, 0];
-		private var trackingVars:Vector.<Number> = new <Number>[1, 3, 1, 1];
-		private var randVars:Vector.<Number> = new <Number>[12.9898, 4.1414, 43758.5453, 1];
-		
-		private var mShaderProgram:Program3D;
-		
-		/** Amount of snow (0-1) */
-		private var mSnow:Number = .40;
-		
-		/** Amount of blur on black bars */
-		private var mTrackingBlur:Number = 1.25;
-		
-		/** Speed of black bars */
-		private var mTracking:Number = 4.0;
-		
-		/** Size/Number of black bars */
-		private var mTrackingAmount:Number = 6.0;
-		
-		/** Image red offset */
-		private var mRedOffset:Point = new Point(.4, .4);
+        private var offsetVars:Vector.<Number> = new <Number>[0, 1, 0, 0];
+        private var trackingVars:Vector.<Number> = new <Number>[1, 3, 1, 1];
+        private var randVars:Vector.<Number> = new <Number>[12.9898, 4.1414, 43758.5453, 1];
+
+        private var mShaderProgram:Program3D;
+
+        /** Amount of snow (0-1) */
+        private var mSnow:Number = .40;
+
+        /** Amount of blur on black bars */
+        private var mTrackingBlur:Number = 1.25;
+
+        /** Speed of black bars */
+        private var mTracking:Number = 4.0;
+
+        /** Size/Number of black bars */
+        private var mTrackingAmount:Number = 6.0;
+
+        /** Image red offset */
+        private var mRedOffset:Point = new Point(.4, .4);
 		
         public function VCRFilter()
         {}
@@ -119,7 +118,7 @@ package starling.filters
         
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-			snowVars[0] = Math.random();
+            snowVars[0] = Math.random();
 			snowVars[1] = Math.random();
 			snowVars[2] = mSnow;
 			
@@ -131,10 +130,10 @@ package starling.filters
 			trackingVars[2] = mTracking;
 			trackingVars[3] = mTrackingBlur;
 			
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, snowVars,		1);
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, offsetVars, 	1);
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, trackingVars, 	1);
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 3, randVars,       1);
+			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, snowVars,     1);
+			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, offsetVars,   1);
+			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, trackingVars, 1);
+			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 3, randVars,     1);
 			
 			context.setProgram(mShaderProgram);
         }
