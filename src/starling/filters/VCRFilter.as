@@ -38,45 +38,44 @@ package starling.filters
     {
 		private static const FRAGMENT_SHADER:String =
 	<![CDATA[
-		// original texture
-		tex ft0, v0, fs0<2d, wrap, linear, mipnone>
-		
-		// jack up red offset
-		add ft1.xy, v0.xy, fc1.xy
-		tex ft3, ft1.xy, fs0<2d, wrap, linear, mipnone>
-		mov ft0.x, ft3.x
-		
-		// Random snow
-		mov ft1.xy, v0.xy
-		add ft1.xy, ft1.xy, fc0.xy
-		mov ft1.zw, fc1.zz
-		mov ft6.xy, fc3.xy
-		mov ft6.zw, fc1.zz
-		dp3 ft1.x, ft1, ft6
-		sin ft1.x, ft1.x
-		mul ft1.x, ft1.x, fc3.z
-		frc ft1.x, ft1.x
-		mov ft2.xyz, ft1.xxx
-		mov ft2.w, ft0.w
-		// multiply snow by snow amount
-		mul ft2.xyz, ft2.xyz, fc0.zzz
-		
-		// tracking (black bar(s))
-		mov ft1.x, v0.y
-		mov ft1.y, fc2.x
-		mul ft1.y, ft1.y, fc2.z
-		mul ft1.x, ft1.x, fc2.y
-		add ft1.x, ft1.x, ft1.y
-		sin ft1.x, ft1.x
-		add ft1.x, ft1.x, fc2.w
-		sat ft1.x, ft1.x
-		
-		// multiply black bar in
-		mul ft0.xyz, ft0.xyz, ft1.xxx
-		
-		// add snow and original
-		add oc, ft0, ft2
-		
+        // original texture
+        tex ft0, v0, fs0<2d, wrap, linear, mipnone>
+
+        // jack up red offset
+        add ft1.xy, v0.xy, fc1.xy
+        tex ft3, ft1.xy, fs0<2d, wrap, linear, mipnone>
+        mov ft0.x, ft3.x
+
+        // Random snow
+        mov ft1.xy, v0.xy
+        add ft1.xy, ft1.xy, fc0.xy
+        mov ft1.zw, fc1.zz
+        mov ft6.xy, fc3.xy
+        mov ft6.zw, fc1.zz
+        dp3 ft1.x, ft1, ft6
+        sin ft1.x, ft1.x
+        mul ft1.x, ft1.x, fc3.z
+        frc ft1.x, ft1.x
+        mov ft2.xyz, ft1.xxx
+        mov ft2.w, ft0.w
+        // multiply snow by snow amount
+        mul ft2.xyz, ft2.xyz, fc0.zzz
+
+        // tracking (black bar(s))
+        mov ft1.x, v0.y
+        mov ft1.y, fc2.x
+        mul ft1.y, ft1.y, fc2.z
+        mul ft1.x, ft1.x, fc2.y
+        add ft1.x, ft1.x, ft1.y
+        sin ft1.x, ft1.x
+        add ft1.x, ft1.x, fc2.w
+        sat ft1.x, ft1.x
+
+        // multiply black bar in
+        mul ft0.xyz, ft0.xyz, ft1.xxx
+
+        // add snow and original
+        add oc, ft0, ft2
 	]]>
 		
         private var snowVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
@@ -119,48 +118,48 @@ package starling.filters
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
             snowVars[0] = Math.random();
-			snowVars[1] = Math.random();
-			snowVars[2] = mSnow;
-			
-			offsetVars[0] = -mRedOffset.x;
-			offsetVars[1] = -mRedOffset.y;
-			
-			trackingVars[0] = getTimer() / 1000;
-			trackingVars[1] = mTrackingAmount;
-			trackingVars[2] = mTracking;
-			trackingVars[3] = mTrackingBlur;
-			
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, snowVars,     1);
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, offsetVars,   1);
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, trackingVars, 1);
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 3, randVars,     1);
-			
-			context.setProgram(mShaderProgram);
+            snowVars[1] = Math.random();
+            snowVars[2] = mSnow;
+
+            offsetVars[0] = -mRedOffset.x;
+            offsetVars[1] = -mRedOffset.y;
+
+            trackingVars[0] = getTimer() / 1000;
+            trackingVars[1] = mTrackingAmount;
+            trackingVars[2] = mTracking;
+            trackingVars[3] = mTrackingBlur;
+
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, snowVars,     1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, offsetVars,   1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, trackingVars, 1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 3, randVars,     1);
+
+            context.setProgram(mShaderProgram);
         }
 		
-		/** Amount of snow */
-		public function get snow():Number { return mSnow; }
-		public function set snow(value:Number):void { mSnow = value; }
-		
-		/** Speed of black bars */
-		public function get tracking():Number { return mTracking; }
-		public function set tracking(value:Number):void { mTracking = value; }
-		
-		/** Blur of black bars */
-		public function get trackingBlur():Number { return mTrackingBlur; }
-		public function set trackingBlur(value:Number):void { mTrackingBlur = value; }
-		
-		/** Size / Number of black bars (larger value = more smaller bars) */
-		public function get trackingAmount():Number { return mTrackingAmount; }
-		public function set trackingAmount(value:Number):void { mTrackingAmount = value; }
-		
-		/** Image red offset x */
-		public function get redOffsetX():Number { return mRedOffset.x; }
-		public function set redOffsetX(value:Number):void { mRedOffset.x = value/100; }
-		
-		/** Image red offset y */
-		public function get redOffsetY():Number { return mRedOffset.y; }
-		public function set redOffsetY(value:Number):void { mRedOffset.y = value/100; }
+        /** Amount of snow */
+        public function get snow():Number { return mSnow; }
+        public function set snow(value:Number):void { mSnow = value; }
+
+        /** Speed of black bars */
+        public function get tracking():Number { return mTracking; }
+        public function set tracking(value:Number):void { mTracking = value; }
+
+        /** Blur of black bars */
+        public function get trackingBlur():Number { return mTrackingBlur; }
+        public function set trackingBlur(value:Number):void { mTrackingBlur = value; }
+
+        /** Size / Number of black bars (larger value = more smaller bars) */
+        public function get trackingAmount():Number { return mTrackingAmount; }
+        public function set trackingAmount(value:Number):void { mTrackingAmount = value; }
+
+        /** Image red offset x */
+        public function get redOffsetX():Number { return mRedOffset.x; }
+        public function set redOffsetX(value:Number):void { mRedOffset.x = value/100; }
+
+        /** Image red offset y */
+        public function get redOffsetY():Number { return mRedOffset.y; }
+        public function set redOffsetY(value:Number):void { mRedOffset.y = value/100; }
 		
     }
 }
