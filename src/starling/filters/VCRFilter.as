@@ -29,11 +29,10 @@ package starling.filters
 	import flash.utils.getTimer;
 	import starling.textures.Texture;
     
-	/**
-	 * Creates a bad VCR effect with static-y snow, offset red colors, and moving black bar(s)
-	 * @author Devon O.
-	 */
-	
+    /**
+     * Creates a bad VCR effect with static-y snow, offset red colors, and moving black bar(s)
+     * @author Devon O.
+     */
     public class VCRFilter extends FragmentFilter
     {
         private static const FRAGMENT_SHADER:String =
@@ -103,7 +102,7 @@ package starling.filters
         public function VCRFilter()
         {}
         
-		/** Clean up */
+        /** Clean up */
         public override function dispose():void
         {
             if (mShaderProgram) mShaderProgram.dispose();
