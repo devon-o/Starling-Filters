@@ -47,11 +47,20 @@ package starling.filters
 		tex ft3, ft1.xy, fs0<2d, wrap, linear, mipnone>
 		mov ft0.x, ft3.x
 		
-		// random snow
-		add ft3.xy, v0.xy, fc0.xy
-		tex ft2, ft3.xy, fs1<2d, wrap, linear, mipnone>
-		// multiply snow by amount of snow
-		mul ft2, ft2, fc0.zzzz
+		// Random snow
+		mov ft1.xy, v0.xy
+		add ft1.xy, ft1.xy, fc0.xy
+		mov ft1.zw, fc1.zz
+		mov ft6.xy, fc3.xy
+		mov ft6.zw, fc1.zz
+		dp3 ft1.x, ft1, ft6
+		sin ft1.x, ft1.x
+		mul ft1.x, ft1.x, fc3.z
+		frc ft1.x, ft1.x
+		mov ft2.xyz, ft1.xxx
+		mov ft2.w, ft0.w
+		// multiply snow by snow amount
+		mul ft2.xyz, ft2.xyz, fc0.zzz
 		
 		// tracking (black bar(s))
 		mov ft1.x, v0.y
@@ -72,12 +81,11 @@ package starling.filters
 	]]>
 		
         private var snowVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
-		private var offsetVars:Vector.<Number> = new <Number>[0, 1, 1, 1];
+		private var offsetVars:Vector.<Number> = new <Number>[0, 1, 0, 0];
 		private var trackingVars:Vector.<Number> = new <Number>[1, 3, 1, 1];
+		private var randVars:Vector.<Number> = new <Number>[12.9898, 4.1414, 43758.5453, 1];
 		
 		private var mShaderProgram:Program3D;
-		
-		private var mNoise:Texture;
 		
 		/** Amount of snow (0-1) */
 		private var mSnow:Number = .40;
@@ -95,15 +103,12 @@ package starling.filters
 		private var mRedOffset:Point = new Point(.4, .4);
 		
         public function VCRFilter()
-        {
-			initNoise();
-        }
+        {}
         
 		/** Clean up */
         public override function dispose():void
         {
             if (mShaderProgram) mShaderProgram.dispose();
-			if (mNoise) mNoise.dispose();
             super.dispose();
         }
         
@@ -126,29 +131,13 @@ package starling.filters
 			trackingVars[2] = mTracking;
 			trackingVars[3] = mTrackingBlur;
 			
-			context.setTextureAt(1, mNoise.base);
-			
 			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, snowVars,		1);
 			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, offsetVars, 	1);
 			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, trackingVars, 	1);
+			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 3, randVars,       1);
 			
 			context.setProgram(mShaderProgram);
         }
-		
-		override protected function deactivate(pass:int, context:Context3D, texture:Texture):void 
-		{
-			context.setTextureAt(1, null);
-			super.deactivate(pass, context, texture);
-		}
-		
-		/** Create texture used for noise / snow */
-		private function initNoise():void
-		{
-			var bmp:BitmapData = new BitmapData(1024, 1024, false, 0x000000);
-			bmp.noise(Math.random() * 99999, 0, 255, 7, true);
-			mNoise = Texture.fromBitmapData(bmp, false);
-			bmp.dispose();
-		}
 		
 		/** Amount of snow */
 		public function get snow():Number { return mSnow; }
