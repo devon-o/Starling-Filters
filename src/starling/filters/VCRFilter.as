@@ -30,13 +30,13 @@ package starling.filters
 	import starling.textures.Texture;
     
 	/**
-	 * Creates scanlines in filtered display object
+	 * Creates a bad VCR effect with static-y snow, offset red colors, and moving black bar(s)
 	 * @author Devon O.
 	 */
 	
     public class VCRFilter extends FragmentFilter
     {
-		private static const FRAGMENT_SHADER:String =
+        private static const FRAGMENT_SHADER:String =
 	<![CDATA[
         // original texture
         tex ft0, v0, fs0<2d, wrap, linear, mipnone>
