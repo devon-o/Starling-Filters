@@ -57,3 +57,6 @@ http://onebyonedesign.com/flash/starling/crosshatch/
 
 VCRFilter:
 http://onebyonedesign.com/flash/starling/vcr/
+
+RectMaskFilter:
+http://onebyonedesign.com/flash/starling/rectmask/
