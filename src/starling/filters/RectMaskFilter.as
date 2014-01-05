@@ -22,11 +22,11 @@
 
 package starling.filters
 {
-	import flash.display3D.Context3D;
+    import flash.display3D.Context3D;
     import flash.display3D.Context3DBlendFactor;
-	import flash.display3D.Context3DProgramType;
-	import flash.display3D.Program3D;
-	import starling.textures.Texture;
+    import flash.display3D.Context3DProgramType;
+    import flash.display3D.Program3D;
+    import starling.textures.Texture;
     
 	/**
 	 * Creates a rectangular mask covering display object. Can be optionally inverted (to create a rectangular hole in display object).
@@ -37,37 +37,37 @@ package starling.filters
     {
 		private static const FRAGMENT_SHADER:String =
 	<![CDATA[
-		mov ft0, v0
-		
+        mov ft0, v0
+
         // create rectangle
         sge ft1.x, ft0.x, fc0.x
         slt ft1.z, ft0.x, fc0.z
         sge ft1.y, ft0.y, fc0.y
         slt ft1.w, ft0.y, fc0.w
-        
+
         mul ft1.x, ft1.x, ft1.y
         mul ft1.x, ft1.x, ft1.z
         mul ft1.x, ft1.x, ft1.w
-        
+
         // invert
         sub ft1.x, ft1.x, fc1.x
         abs ft1.x, ft1.x
-        
-		tex ft2, ft0, fs0<2d, wrap, linear, mipnone>
-        
+
+        tex ft2, ft0, fs0<2d, wrap, linear, mipnone>
+
         mov ft2.w, ft1.x
         mov oc ft2
 	]]>
 		
         private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
-		private var mBooleans:Vector.<Number> = new <Number>[1, 1, 1, 1];
-		private var mShaderProgram:Program3D;
-		
+        private var mBooleans:Vector.<Number> = new <Number>[1, 1, 1, 1];
+        private var mShaderProgram:Program3D;
+
         private var mX:Number
-		private var mY:Number;
-		private var mWidth:Number;
+        private var mY:Number;
+        private var mWidth:Number;
         private var mHeight:Number;
-		private var mInvert:Boolean;
+        private var mInvert:Boolean;
 		
         /**
          * Create a new RectMaskFilter instance
@@ -79,7 +79,7 @@ package starling.filters
          */
         public function RectMaskFilter(x:Number=0, y:Number=0, width:Number=100, height:Number=100, invert:Boolean=false)
         {
-			mX = x;
+            mX = x;
             mY = y;
             mWidth = width;
             mHeight = height;
@@ -99,37 +99,37 @@ package starling.filters
         
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-			mVars[0] = mX / texture.width;
-			mVars[1] = mY / texture.height;
-			mVars[2] = (mX + mWidth) / texture.width;
+            mVars[0] = mX / texture.width;
+            mVars[1] = mY / texture.height;
+            mVars[2] = (mX + mWidth) / texture.width;
             mVars[3] = (mY + mHeight) / texture.height;
-			
-			mBooleans[0] = int(mInvert);
-            
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars,		1);
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mBooleans,	1);
+
+            mBooleans[0] = int(mInvert);
+
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars,		1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mBooleans,	1);
             context.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
-			context.setProgram(mShaderProgram);
+            context.setProgram(mShaderProgram);
         }
         
         override protected function deactivate(pass:int, context:Context3D, texture:Texture):void 
-		{
-			context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO);
-		}
+        {
+            context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO);
+        }
         
         public function get x():Number { return mX; }
         public function set x(value:Number):void { mX = value; }
-		
-		public function get y():Number { return mY; }
-		public function set y(value:Number):void { mY = value; }
-		
-		public function get width():Number { return mWidth; }
+
+        public function get y():Number { return mY; }
+        public function set y(value:Number):void { mY = value; }
+
+        public function get width():Number { return mWidth; }
         public function set width(value:Number):void { mWidth = value; }
-        
+
         public function get height():Number { return mHeight; }
         public function set height(value:Number):void { mHeight = value; }
-		
-		public function get invert():Boolean { return mInvert; }
-		public function set invert(value:Boolean):void { mInvert = value; }
+
+        public function get invert():Boolean { return mInvert; }
+        public function set invert(value:Boolean):void { mInvert = value; }
     }
 }
