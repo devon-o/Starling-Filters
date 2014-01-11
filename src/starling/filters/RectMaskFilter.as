@@ -55,6 +55,7 @@ package starling.filters
 
         tex ft2, ft0, fs0<2d, wrap, linear, mipnone>
 
+        mul ft1.x, ft1.x, ft2.w
         mov ft2.w, ft1.x
         mov oc ft2
 	]]>
