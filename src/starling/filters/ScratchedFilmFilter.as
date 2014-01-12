@@ -118,7 +118,7 @@ package starling.filters
         private var mUpdateTime:Number = 0.0;
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-            mVars1[0] =	mSpeed1;
+            mVars1[0] = mSpeed1;
             mVars1[1] = mSpeed2;
             mVars1[2] = mScratchIntensity;
             mVars1[3] = mScratchWidth;

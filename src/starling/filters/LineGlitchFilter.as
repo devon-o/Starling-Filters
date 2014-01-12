@@ -87,9 +87,9 @@ package starling.filters
          */
         public function LineGlitchFilter(size:Number=1, angle:Number=45.0, distance:Number = .01)
         {
-            mSize		= size;
-            mAngle		= angle;
-            mDistance	= distance;
+            mSize       = size;
+            mAngle      = angle;
+            mDistance   = distance;
         }
         
         public override function dispose():void

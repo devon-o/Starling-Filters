@@ -50,9 +50,9 @@ package starling.filters
          */
         public function MotionBlurFilter(angle:Number=0.0, amount:Number=1.0, steps:int=5)
         {
-            mAngle	= angle;
-            mAmount	= clamp(amount, 0.0, 20.0);
-            mSteps	= int(clamp(steps, 1.0, 30.0));
+            mAngle  = angle;
+            mAmount = clamp(amount, 0.0, 20.0);
+            mSteps  = int(clamp(steps, 1.0, 30.0));
 
             marginX = marginY = mAmount * mSteps ;
         }

@@ -68,8 +68,8 @@ package starling.filters
             mov oc, ft2
         ]]>
 		
-        private var mVars:Vector.<Number>		= new <Number>[1.0, 1.0, 1.0,  1.0];
-        private var mConstants:Vector.<Number>	= new <Number>[4.0, 5.0, 10.0, 3.0];;
+        private var mVars:Vector.<Number>       = new <Number>[1.0, 1.0, 1.0,  1.0];
+        private var mConstants:Vector.<Number>  = new <Number>[4.0, 5.0, 10.0, 3.0];;
         private var mShaderProgram:Program3D;
 
         private var mSize:Number;

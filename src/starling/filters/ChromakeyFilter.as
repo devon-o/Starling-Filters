@@ -117,9 +117,9 @@ class ColorObject
 	
     public function setColor(color:uint):void
     {
-        var red:uint	= color >> 16;
-        var green:uint	= color >> 8 & 0xFF;
-        var blue:uint	= color & 0xFF;
+        var red:uint    = color >> 16;
+        var green:uint  = color >> 8 & 0xFF;
+        var blue:uint   = color & 0xFF;
 
         r = red / 0xFF;
         g = green / 0xFF;

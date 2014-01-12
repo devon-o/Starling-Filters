@@ -155,11 +155,11 @@ package starling.filters
             mVars[2] = mOuterCone * RADIAN;	// outer cone angle
             mVars[3] = mInnerCone * RADIAN;	// inner cone angle
 
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mCenter,		1);
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mVars,			1);
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, mLightColor,	1);
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 3, mAttenuation,	1);
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 4, mSmoothStep,	1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mCenter,        1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mVars,          1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, mLightColor,    1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 3, mAttenuation,   1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 4, mSmoothStep,    1);
 
             context.setProgram(mShaderProgram);
         }

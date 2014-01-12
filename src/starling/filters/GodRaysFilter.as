@@ -134,9 +134,9 @@ package starling.filters
             mVars2[1] = mDecay;
             mVars2[2] = mExposure;
 
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mLightPos, 	1 );	
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mVars1,  	1 );
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, mVars2,  	1 );
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mLightPos,  1 );	
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mVars1,     1 );
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, mVars2,     1 );
 
             context.setProgram(mShaderProgram);
         }
