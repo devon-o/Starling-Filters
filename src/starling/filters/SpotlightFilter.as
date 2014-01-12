@@ -80,12 +80,12 @@ package starling.filters
          */
         public function SpotlightFilter(cx:Number=0.0, cy:Number=0.0, amount:Number=1.0, radius:Number=.25, size:Number=.25, useFlicker:Boolean=false)
         {
-            mCenterX	= cx;
-            mCenterY	= cy;
-            mAmount		= amount;
-            mRadius		= radius;
-            mSize		= size;
-            mUseFlicker	= useFlicker;
+            mCenterX    = cx;
+            mCenterY    = cy;
+            mAmount     = amount;
+            mRadius     = radius;
+            mSize       = size;
+            mUseFlicker = useFlicker;
         }
  
         public override function dispose():void
