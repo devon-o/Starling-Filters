@@ -79,9 +79,9 @@ package starling.filters
             mov oc, ft5
         ]]>
 		
-        private var mLeft:Vector.<Number>		= new <Number>[0.0, 0.0, 0.0, 0.0];
-        private var mRight:Vector.<Number>		= new <Number>[1.0, 1.0, 1.0, 1.0];
-        private var mVars:Vector.<Number>		= new <Number>[1.0, 2.0, 3.0, 0.0];
+        private var mLeft:Vector.<Number>   = new <Number>[0.0, 0.0, 0.0, 0.0];
+        private var mRight:Vector.<Number>  = new <Number>[1.0, 1.0, 1.0, 1.0];
+        private var mVars:Vector.<Number>   = new <Number>[1.0, 2.0, 3.0, 0.0];
 
         private var mShaderProgram:Program3D;
 		
