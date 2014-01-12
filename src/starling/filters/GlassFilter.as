@@ -22,46 +22,46 @@
 
 package starling.filters
 {
-	import flash.display3D.Context3D;
-	import flash.display3D.Context3DProgramType;
-	import flash.display3D.Program3D;
-	import starling.textures.Texture;
-    
-	/**
-	 * Creates a tiled glass distortion effect
-	 * @author Devon O.
-	 */
+    import flash.display3D.Context3D;
+    import flash.display3D.Context3DProgramType;
+    import flash.display3D.Program3D;
+    import starling.textures.Texture;
+
+    /**
+     * Creates a tiled glass distortion effect
+     * @author Devon O.
+     */
 	
     public class GlassFilter extends FragmentFilter
     {
-		private static const FRAGMENT_SHADER:String =
-	<![CDATA[
-		mov ft0.xy, v0.xy
-		mul ft1.x, ft0.x, fc0.y
-		sin ft1.x, ft1.x		
-		mul ft1.x, ft1.x, fc0.x
-		mul ft1.y, ft0.y, fc0.y
-		sin ft1.y, ft1.y		
-		mul ft1.y, ft1.y, fc0.x
-		add ft0.xy, ft0.xy, ft1.xy
-		tex oc, ft0.xy, fs0<2d, clamp, linear, mipnone>
-	]]>
+        private static const FRAGMENT_SHADER:String =
+        <![CDATA[
+            mov ft0.xy, v0.xy
+            mul ft1.x, ft0.x, fc0.y
+            sin ft1.x, ft1.x		
+            mul ft1.x, ft1.x, fc0.x
+            mul ft1.y, ft0.y, fc0.y
+            sin ft1.y, ft1.y		
+            mul ft1.y, ft1.y, fc0.x
+            add ft0.xy, ft0.xy, ft1.xy
+            tex oc, ft0.xy, fs0<2d, clamp, linear, mipnone>
+        ]]>
 		
         private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
         private var mShaderProgram:Program3D;
-		
-		private var mAmount:Number;
-		private var mRipple:Number;
+
+        private var mAmount:Number;
+        private var mRipple:Number;
         
-		/**
-		 * 
-		 * @param	amount		Amount of effect (0 - 1)
-		 * @param	ripple		Amount of ripple to apply
-		 */
+        /**
+         * 
+         * @param	amount		Amount of effect (0 - 1)
+         * @param	ripple		Amount of ripple to apply
+         */
         public function GlassFilter(amount:Number=0.0, ripple:Number=0.0)
         {
-           mAmount = amount;
-		   mRipple = ripple;
+            mAmount = amount;
+            mRipple = ripple;
         }
         
         public override function dispose():void
@@ -79,16 +79,16 @@ package starling.filters
         {
             mVars[0] = mAmount / 100;
             mVars[1] = mRipple ;
-            
+
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars, 1);
             context.setProgram(mShaderProgram);
         }
         
         public function get ripple():Number { return mRipple; }
         public function set ripple(value:Number):void { mRipple = value; }
-		
-		/** 0 - 1 */
-		public function get amount():Number { return mAmount; }
+
+        /** 0 - 1 */
+        public function get amount():Number { return mAmount; }
         public function set amount(value:Number):void { mAmount = value; }
     }
 }

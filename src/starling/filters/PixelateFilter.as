@@ -22,35 +22,34 @@
 
 package starling.filters
 {
-	import flash.display3D.Context3D;
-	import flash.display3D.Context3DProgramType;
-	import flash.display3D.Program3D;
-	import starling.textures.Texture;
+    import flash.display3D.Context3D;
+    import flash.display3D.Context3DProgramType;
+    import flash.display3D.Program3D;
+    import starling.textures.Texture;
 	
-	/**
-	 * Pixelates images (square 'pixels')
-	 * @author Devon O.
-	 */
+    /**
+     * Pixelates images (square 'pixels')
+     * @author Devon O.
+     */
     
     public class PixelateFilter extends FragmentFilter
     {
-		private static const FRAGMENT_SHADER:String =
-	<![CDATA[
-		div ft0, v0, fc0
-        frc ft1, ft0
-		sub ft0, ft0, ft1
-		mul ft0, ft0, fc0
-		tex oc, ft0, fs0<2d, clamp, linear, mipnone>
-	]]>
-		
+        private static const FRAGMENT_SHADER:String =
+        <![CDATA[
+            div ft0, v0, fc0
+            frc ft1, ft0
+            sub ft0, ft0, ft1
+            mul ft0, ft0, fc0
+            tex oc, ft0, fs0<2d, clamp, linear, mipnone>
+        ]]>
 		
         private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
-		private var mShaderProgram:Program3D;
-		
+        private var mShaderProgram:Program3D;
+
         private var mPixelSize:int;
         
         /**
-         *
+         * Creates a new PixelateFilter
          * @param       pixelSize	size of pixel effect
          */
         public function PixelateFilter(pixelSize:int=8)
@@ -73,7 +72,7 @@ package starling.filters
         {
             mVars[0] = mPixelSize / texture.width;
             mVars[1] = mPixelSize / texture.height;
-            
+
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars, 1);
             context.setProgram(mShaderProgram);
         }

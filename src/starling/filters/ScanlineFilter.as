@@ -22,52 +22,51 @@
 
 package starling.filters
 {
-	import flash.display3D.Context3D;
-	import flash.display3D.Context3DProgramType;
-	import flash.display3D.Program3D;
-	import starling.textures.Texture;
+    import flash.display3D.Context3D;
+    import flash.display3D.Context3DProgramType;
+    import flash.display3D.Program3D;
+    import starling.textures.Texture;
     
-	/**
-	 * Creates scanlines in filtered display object
-	 * @author Devon O.
-	 */
+    /**
+     * Creates scanlines in filtered display object
+     * @author Devon O.
+     */
 	
     public class ScanlineFilter extends FragmentFilter
     {
-		private static const FRAGMENT_SHADER:String =
-	<![CDATA[
-	
-		// scanline color
-		div ft0.x, v0.y, fc0.x
-		frc ft0.x, ft0.x
-		sub ft0.x, ft0.x, fc0.w
-		abs ft0.x, ft0.x
-		
-		// get texture
-		tex ft1, v0, fs0<2d, clamp, linear, mipnone>
-		
-        // scanline effect
-		sub ft2.xyz, fc0.www, ft1.xyz
-		mul ft2.xyz, ft2.xyz, ft0.xxx
-		add ft2.xyz, ft2.xyz, ft1.xyz
-		mul ft1.xyz, ft1.xyz, ft2.xyz
-		
-		mov oc, ft1
-		
-	]]>
+        private static const FRAGMENT_SHADER:String =
+        <![CDATA[
+
+            // scanline color
+            div ft0.x, v0.y, fc0.x
+            frc ft0.x, ft0.x
+            sub ft0.x, ft0.x, fc0.w
+            abs ft0.x, ft0.x
+
+            // get texture
+            tex ft1, v0, fs0<2d, clamp, linear, mipnone>
+
+            // scanline effect
+            sub ft2.xyz, fc0.www, ft1.xyz
+            mul ft2.xyz, ft2.xyz, ft0.xxx
+            add ft2.xyz, ft2.xyz, ft1.xyz
+            mul ft1.xyz, ft1.xyz, ft2.xyz
+
+            mov oc, ft1
+        ]]>
 		
         private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
-		private var mShaderProgram:Program3D;
-		
+        private var mShaderProgram:Program3D;
+
         private var mPixels:Number;
 		
-		/**
-		 * 
-		 * @param	pixels		pixel distance between scanlines
-		 */
+        /**
+         * Creates a new ScanlineFilter
+         * @param   pixels  pixel distance between scanlines
+         */
         public function ScanlineFilter(pixels:Number=2.0)
         {
-			mPixels = pixels;
+            mPixels = pixels;
         }
         
         public override function dispose():void
@@ -83,10 +82,10 @@ package starling.filters
         
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-			mVars[0] = mPixels / texture.height
-            
-			context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars, 1);
-			context.setProgram(mShaderProgram);
+            mVars[0] = mPixels / texture.height
+
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars, 1);
+            context.setProgram(mShaderProgram);
         }
         
         public function get pixels():Number { return mPixels; }

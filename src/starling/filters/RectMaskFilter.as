@@ -35,28 +35,28 @@ package starling.filters
 	
     public class RectMaskFilter extends FragmentFilter
     {
-		private static const FRAGMENT_SHADER:String =
-	<![CDATA[
-        // create rectangle
-        sge ft1.x, v0.x, fc0.x
-        slt ft1.z, v0.x, fc0.z
-        sge ft1.y, v0.y, fc0.y
-        slt ft1.w, v0.y, fc0.w
-        
-        mul ft1.x, ft1.x, ft1.y
-        mul ft1.x, ft1.x, ft1.z
-        mul ft1.x, ft1.x, ft1.w
-        
-        // invert
-        sub ft1.x, ft1.x, fc1.x
-        abs ft1.x, ft1.x
-        
-        // grab texture
-        tex ft0, v0, fs0<2d, wrap, linear, mipnone>
-        
-        // multiply by desired alpha
-        mul oc, ft0.xyzw, ft1.xxxx
-	]]>
+        private static const FRAGMENT_SHADER:String =
+        <![CDATA[
+            // create rectangle
+            sge ft1.x, v0.x, fc0.x
+            slt ft1.z, v0.x, fc0.z
+            sge ft1.y, v0.y, fc0.y
+            slt ft1.w, v0.y, fc0.w
+            
+            mul ft1.x, ft1.x, ft1.y
+            mul ft1.x, ft1.x, ft1.z
+            mul ft1.x, ft1.x, ft1.w
+            
+            // invert
+            sub ft1.x, ft1.x, fc1.x
+            abs ft1.x, ft1.x
+            
+            // grab texture
+            tex ft0, v0, fs0<2d, wrap, linear, mipnone>
+            
+            // multiply by desired alpha
+            mul oc, ft0.xyzw, ft1.xxxx
+        ]]>
 		
         private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
         private var mBooleans:Vector.<Number> = new <Number>[1, 1, 1, 1];

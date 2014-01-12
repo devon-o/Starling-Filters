@@ -22,12 +22,12 @@
 
 package starling.filters
 {
-	import flash.display3D.Context3D;
-	import flash.display3D.Context3DProgramType;
-	import flash.display3D.Program3D;
-	import flash.geom.Point;
-	import flash.utils.getTimer;
-	import starling.textures.Texture;
+    import flash.display3D.Context3D;
+    import flash.display3D.Context3DProgramType;
+    import flash.display3D.Program3D;
+    import flash.geom.Point;
+    import flash.utils.getTimer;
+    import starling.textures.Texture;
     
     /**
      * Creates a bad VCR effect with static-y snow, offset red colors, and moving black bar(s)
@@ -36,46 +36,46 @@ package starling.filters
     public class VCRFilter extends FragmentFilter
     {
         private static const FRAGMENT_SHADER:String =
-	<![CDATA[
-        // original texture
-        tex ft0, v0, fs0<2d, wrap, linear, mipnone>
+        <![CDATA[
+            // original texture
+            tex ft0, v0, fs0<2d, wrap, linear, mipnone>
 
-        // jack up red offset
-        add ft1.xy, v0.xy, fc1.xy
-        tex ft3, ft1.xy, fs0<2d, wrap, linear, mipnone>
-        mov ft0.x, ft3.x
+            // jack up red offset
+            add ft1.xy, v0.xy, fc1.xy
+            tex ft3, ft1.xy, fs0<2d, wrap, linear, mipnone>
+            mov ft0.x, ft3.x
 
-        // Random snow
-        mov ft1.xy, v0.xy
-        add ft1.xy, ft1.xy, fc0.xy
-        mov ft1.zw, fc1.zz
-        mov ft6.xy, fc3.xy
-        mov ft6.zw, fc1.zz
-        dp3 ft1.x, ft1, ft6
-        sin ft1.x, ft1.x
-        mul ft1.x, ft1.x, fc3.z
-        frc ft1.x, ft1.x
-        mov ft2.xyz, ft1.xxx
-        mov ft2.w, ft0.w
-        // multiply snow by snow amount
-        mul ft2.xyz, ft2.xyz, fc0.zzz
+            // Random snow
+            mov ft1.xy, v0.xy
+            add ft1.xy, ft1.xy, fc0.xy
+            mov ft1.zw, fc1.zz
+            mov ft6.xy, fc3.xy
+            mov ft6.zw, fc1.zz
+            dp3 ft1.x, ft1, ft6
+            sin ft1.x, ft1.x
+            mul ft1.x, ft1.x, fc3.z
+            frc ft1.x, ft1.x
+            mov ft2.xyz, ft1.xxx
+            mov ft2.w, ft0.w
+            // multiply snow by snow amount
+            mul ft2.xyz, ft2.xyz, fc0.zzz
 
-        // tracking (black bar(s))
-        mov ft1.x, v0.y
-        mov ft1.y, fc2.x
-        mul ft1.y, ft1.y, fc2.z
-        mul ft1.x, ft1.x, fc2.y
-        add ft1.x, ft1.x, ft1.y
-        sin ft1.x, ft1.x
-        add ft1.x, ft1.x, fc2.w
-        sat ft1.x, ft1.x
+            // tracking (black bar(s))
+            mov ft1.x, v0.y
+            mov ft1.y, fc2.x
+            mul ft1.y, ft1.y, fc2.z
+            mul ft1.x, ft1.x, fc2.y
+            add ft1.x, ft1.x, ft1.y
+            sin ft1.x, ft1.x
+            add ft1.x, ft1.x, fc2.w
+            sat ft1.x, ft1.x
 
-        // multiply black bar in
-        mul ft0.xyz, ft0.xyz, ft1.xxx
+            // multiply black bar in
+            mul ft0.xyz, ft0.xyz, ft1.xxx
 
-        // add snow and original
-        add oc, ft0, ft2
-	]]>
+            // add snow and original
+            add oc, ft0, ft2
+        ]]>
 		
         private var snowVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
         private var offsetVars:Vector.<Number> = new <Number>[0, 1, 0, 0];
@@ -128,10 +128,10 @@ package starling.filters
             trackingVars[2] = mTracking;
             trackingVars[3] = mTrackingBlur;
 
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, snowVars,     1);
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, offsetVars,   1);
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, trackingVars, 1);
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 3, randVars,     1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, snowVars,       1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, offsetVars,     1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, trackingVars,   1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 3, randVars,       1);
 
             context.setProgram(mShaderProgram);
         }
