@@ -37,27 +37,25 @@ package starling.filters
     {
 		private static const FRAGMENT_SHADER:String =
 	<![CDATA[
-        mov ft0, v0
-
         // create rectangle
-        sge ft1.x, ft0.x, fc0.x
-        slt ft1.z, ft0.x, fc0.z
-        sge ft1.y, ft0.y, fc0.y
-        slt ft1.w, ft0.y, fc0.w
-
+        sge ft1.x, v0.x, fc0.x
+        slt ft1.z, v0.x, fc0.z
+        sge ft1.y, v0.y, fc0.y
+        slt ft1.w, v0.y, fc0.w
+        
         mul ft1.x, ft1.x, ft1.y
         mul ft1.x, ft1.x, ft1.z
         mul ft1.x, ft1.x, ft1.w
-
+        
         // invert
         sub ft1.x, ft1.x, fc1.x
         abs ft1.x, ft1.x
-
-        tex ft2, ft0, fs0<2d, wrap, linear, mipnone>
-
-        mul ft1.x, ft1.x, ft2.w
-        mov ft2.w, ft1.x
-        mov oc ft2
+        
+        // grab texture
+        tex ft0, v0, fs0<2d, wrap, linear, mipnone>
+        
+        // multiply by desired alpha
+        mul oc, ft0.xyzw, ft1.xxxx
 	]]>
 		
         private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
@@ -107,8 +105,8 @@ package starling.filters
 
             mBooleans[0] = int(mInvert);
 
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars,		1);
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mBooleans,	1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars,      1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mBooleans,  1);
             context.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
             context.setProgram(mShaderProgram);
         }
