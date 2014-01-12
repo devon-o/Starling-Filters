@@ -70,9 +70,9 @@ package starling.filters
          */
         public function SineFilter(amplitude:Number=0.0, frequency:Number=0.0, ticker:Number=0.0)
         {
-            mAmplitude	= amplitude;
-            mTicker		= ticker;
-            mFrequency	= frequency;
+            mAmplitude  = amplitude;
+            mTicker     = ticker;
+            mFrequency  = frequency;
         }
         
         public override function dispose():void
@@ -95,8 +95,8 @@ package starling.filters
             mBooleans[0] = int(mIsHorizontal);
             mBooleans[1] = int(!mIsHorizontal);
 
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars,		1);
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mBooleans,	1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars,      1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mBooleans,  1);
             context.setProgram(mShaderProgram);
         }
         
