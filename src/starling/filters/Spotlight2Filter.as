@@ -80,10 +80,10 @@ package starling.filters
          */
         public function Spotlight2Filter(x:Number=0.0, y:Number=0.0, radius:Number=.25, corona:Number=2.0)
         {
-            mX 		= x;
-            mY 		= y;
-            mRadius	= radius;
-            mCorona	= corona;
+            mX      = x;
+            mY      = y;
+            mRadius = radius;
+            mCorona = corona;
         }
  
         public override function dispose():void
