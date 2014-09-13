@@ -48,13 +48,15 @@ package starling.filters
          * @param	amount	the amount of blur
          * @param	steps	the level of the blur. A higher number produces a better result, but with worse performance. Can only be set once.
          */
-        public function MotionBlurFilter(angle:Number=0.0, amount:Number=1.0, steps:int=5)
+        public function MotionBlurFilter(angle:Number=0.0, amount:Number=1.0, steps:int=5, numPasses:int=1)
         {
             mAngle  = angle;
             mAmount = clamp(amount, 0.0, 20.0);
             mSteps  = int(clamp(steps, 1.0, 30.0));
-
-            marginX = marginY = mAmount * mSteps ;
+            
+            this.numPasses = numPasses;
+            
+            marginX = marginY = mAmount * mSteps;
         }
         
         public override function dispose():void
