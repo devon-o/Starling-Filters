@@ -58,12 +58,14 @@ package starling.filters
         private var mDensity:Number     = 2.0;
         
         /**
-         * 
+         * Create a GodRaysFilter
          * @param	numSteps	Number of samples to take along the ray path (maximum 32 with Context3DProfile.BASELINE)
+         * @param   numPasses   Number of passes this filter should apply (1 pass = 1 drawcall)
          */
-        public function GodRaysFilter(numSteps:int=30)
+        public function GodRaysFilter(numSteps:int=30, numPasses:int=1)
         {
             mNumSteps = numSteps;
+            this.numPasses = numPasses;
         }
         
         public override function dispose():void
