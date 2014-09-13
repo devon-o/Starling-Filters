@@ -58,15 +58,15 @@ package starling.filters
         private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
         private var mShaderProgram:Program3D;
 
-        private var mPixels:Number;
+        private var mSpacing:Number;
 		
         /**
          * Creates a new ScanlineFilter
-         * @param   pixels  pixel distance between scanlines
+         * @param   spacing  spacing between scanlines
          */
-        public function ScanlineFilter(pixels:Number=2.0)
+        public function ScanlineFilter(spacing:Number=2.0)
         {
-            mPixels = pixels;
+            mSpacing = spacing;
         }
         
         public override function dispose():void
@@ -82,14 +82,14 @@ package starling.filters
         
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-            mVars[0] = mPixels / texture.height
+            mVars[0] = mSpacing / texture.height
 
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars, 1);
             context.setProgram(mShaderProgram);
         }
         
-        public function get pixels():Number { return mPixels; }
-        public function set pixels(value:Number):void { mPixels = value; }
+        public function get spacing():Number { return mSpacing; }
+        public function set spacing(value:Number):void { mSpacing = value; }
 		
     }
 }
