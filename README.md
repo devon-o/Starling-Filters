@@ -60,3 +60,6 @@ http://onebyonedesign.com/flash/starling/vcr/
 
 RectMaskFilter:
 http://onebyonedesign.com/flash/starling/rectmask/
+
+ToyBlockFilter:
+http://onebyonedesign.com/flash/starling/toyblock/
