@@ -53,6 +53,8 @@ package starling.filters
         
         private var brickTexture:Texture;
         
+        private var cacheTexture:Texture;
+        
         private var mShaderProgram:Program3D;
 
         public function ToyBlockFilter(){}
@@ -66,6 +68,7 @@ package starling.filters
                 brickTexture.dispose();
                 brickTexture = null;
             }
+            cacheTexture = null;
             super.dispose();
         }
         
@@ -76,8 +79,12 @@ package starling.filters
 		
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {	
-            if (!brickTexture)
+            // if no brick texture or we've applied this filter to a new display object
+            if (!brickTexture || texture != cacheTexture)
+            {
                 createBrickTexture(texture.width, texture.height);
+                cacheTexture = texture;
+            }
                 
             mVars[0] = 16.0 / texture.width;
             mVars[1] = 8.0 / texture.height;
