@@ -58,17 +58,21 @@ package starling.filters
         /** Spread */
         private var mSpread:Number = .30;
         
+        /** Boost */
+        private var mBoost:Number = 1.0;
+        
         /** AGAL program */
         private var mShaderProgram:Program3D;
         
         /**
          * Create a new LightStreak Filter
          * @param samples   number of samples/steps
+         * @param passes    number of passes. Each pass will add a new streak with a 90 degree offset.
          */
-        public function LightStreakFilter(samples:int=10)
+        public function LightStreakFilter(samples:int=10, passes:int=4)
         {
             this.mSamples = samples;
-            this.numPasses = 4;
+            this.numPasses = passes;
         }
         
         /** Dispose */
@@ -128,8 +132,8 @@ package starling.filters
             
             // angle (90 degrees each pass)
             var ang:Number = mAngle + (1.57079633 * pass);
-            fc1[0] = Math.cos(ang);
-            fc1[1] = Math.sin(ang);
+            fc1[0] = Math.cos(ang) * mBoost;
+            fc1[1] = Math.sin(ang) * mBoost;
             
             // texel size
             fc1[2] = 1 / texture.width;
@@ -153,5 +157,9 @@ package starling.filters
         /** Spread */
         public function set spread(value:Number):void { mSpread = value; }
         public function get spread():Number { return mSpread; }
+        
+        /** Boost (similar to spread, but adjusting the 2 independently can produce better results) */
+        public function set boost(value:Number):void { mBoost = value; }
+        public function get boost():Number { return mBoost; }
     }
 }
