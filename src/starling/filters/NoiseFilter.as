@@ -41,9 +41,12 @@ package starling.filters
             add ft1.xy, ft1.xy, fc0.xy
             mov ft6.xy, fc1.xy
             
-            // The "canonical one-liner" noise function
-            //fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453)
+            // 'improved' "canonical one-liner" noise function
+            //@see http://byteblacksmith.com/improvements-to-the-canonical-one-liner-glsl-rand-for-opengl-es-2-0/
             dp3 ft1.x, ft1.xy, ft6.xy
+            div ft1.x, ft1.x, fc1.w
+            frc ft1.x, ft1.x
+            mul ft1.x, ft1.x, fc1.w
             sin ft1.x, ft1.x
             mul ft1.x, ft1.x, fc1.z
             frc ft1.x, ft1.x
@@ -56,7 +59,7 @@ package starling.filters
         ]]>
 	
         private var noiseVars:Vector.<Number> = new <Number>[1, 1, 1, 0];
-        private var randVars:Vector.<Number> = new <Number>[12.9898, 78.233, 43758.5453, 1];
+        private var randVars:Vector.<Number> = new <Number>[12.9898, 78.233, 43758.5453, Math.PI];
         
         private var mShaderProgram:Program3D;
 
