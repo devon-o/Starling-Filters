@@ -23,6 +23,7 @@
 package starling.filters
 {
     import flash.display3D.Context3D;
+    import flash.display3D.Context3DBlendFactor;
     import flash.display3D.Context3DProgramType;
     import starling.textures.Texture;
 
@@ -130,8 +131,15 @@ package starling.filters
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, this.lightPos,  1 );	
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, this.vars1,     1 );
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, this.vars2,     1 );
+            context.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
             
             super.activate(pass, context, texture);
+        }
+        
+        /** Deactivate */
+        override protected function deactivate(pass:int, context:Context3D, texture:Texture):void 
+        {
+            context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO);
         }
 		
         /** X Position */
