@@ -27,7 +27,6 @@ package starling.filters
     import flash.display.Sprite;
     import flash.display3D.Context3D;
     import flash.display3D.Context3DProgramType;
-    import flash.display3D.Program3D;
     import flash.filters.DropShadowFilter;
     import starling.textures.Texture;
 	
@@ -36,69 +35,77 @@ package starling.filters
      * @author Devon O.
      */
     
-    public class ToyBlockFilter extends FragmentFilter
+    public class ToyBlockFilter extends BaseFilter
     {
-        private static const FRAGMENT_SHADER:String =
-        <![CDATA[
-            div ft0, v0, fc0
-            frc ft1, ft0
-            sub ft0, ft0, ft1
-            mul ft0, ft0, fc0
-            tex ft1, ft0, fs0<2d, clamp, linear, mipnone>
-            tex ft2, v0, fs1<2d, clamp, linear, mipnone>
-            mul oc, ft1, ft2
-        ]]>
-
-        private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
+        
+        private var vars:Vector.<Number> = new <Number>[1, 1, 1, 1];
         
         private var brickTexture:Texture;
-        
         private var cacheTexture:Texture;
         
-        private var mShaderProgram:Program3D;
-
+        /** Create a new ToyBlockFilter */
         public function ToyBlockFilter(){}
         
+        /** Dispose */
         public override function dispose():void
         {
-            if (mShaderProgram)
-                mShaderProgram.dispose();
-            if (brickTexture)
+            if (this.brickTexture!=null)
             {
-                brickTexture.dispose();
-                brickTexture = null;
+                this.brickTexture.dispose();
+                
             }
-            cacheTexture = null;
+            if (this.cacheTexture!=null)
+            {
+                this.cacheTexture.dispose();
+            }
+            
+            this.cacheTexture = null;
+            this.brickTexture = null;
+            
             super.dispose();
         }
         
-        protected override function createPrograms():void
+        /** Set AGAL */
+        override protected function setAgal():void 
         {
-            mShaderProgram = assembleAgal(FRAGMENT_SHADER);
+            FRAGMENT_SHADER =
+            <![CDATA[
+                div ft0, v0, fc0
+                frc ft1, ft0
+                sub ft0, ft0, ft1
+                mul ft0, ft0, fc0
+                tex ft1, ft0, fs0<2d, clamp, linear, mipnone>
+                tex ft2, v0, fs1<2d, clamp, linear, mipnone>
+                mul oc, ft1, ft2
+            ]]>
         }
-		
+        
+        /** Activate */
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {	
             // if no brick texture or we've applied this filter to a new display object
-            if (!brickTexture || texture != cacheTexture)
+            if (!this.brickTexture || texture != this.cacheTexture)
             {
                 createBrickTexture(texture.width, texture.height);
-                cacheTexture = texture;
+                this.cacheTexture = texture;
             }
                 
-            mVars[0] = 16.0 / texture.width;
-            mVars[1] = 8.0 / texture.height;
+            this.vars[0] = 16.0 / texture.width;
+            this.vars[1] = 8.0 / texture.height;
             
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars, 1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, this.vars, 1);
             context.setTextureAt(1, this.brickTexture.base);
-            context.setProgram(mShaderProgram);
+            
+            super.activate(pass, context, texture);
         }
 		
+        /** Deactivate */
         override protected function deactivate(pass:int, context:Context3D, texture:Texture):void 
         {
             context.setTextureAt(1, null);
         }
         
+        /** Create brick texture */
         private function createBrickTexture(w:Number, h:Number):void
         {
             var dat:BitmapData = brickData(w, h);
@@ -106,9 +113,10 @@ package starling.filters
             dat.dispose();
         }
         
+        /** Brick bitmapdata */
         private function brickData(w:Number, h:Number):BitmapData
         {
-            var col:uint = 0xCDCDCD;
+            const col:uint = 0xCDCDCD;
             
             var s:Sprite = new Sprite();
             s.graphics.beginFill(col);
