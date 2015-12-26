@@ -24,7 +24,6 @@ package starling.filters
 {
     import flash.display3D.Context3D;
     import flash.display3D.Context3DProgramType;
-    import flash.display3D.Program3D;
     import starling.textures.Texture;
 	
     /**
@@ -32,112 +31,18 @@ package starling.filters
      * @author Devon O.
      */
  
-    public class BloomFilter extends FragmentFilter
+    public class BloomFilter extends BaseFilter
     {
-        private static const FRAGMENT_SHADER:String =
-        <![CDATA[
         
-        //original texture
-        tex ft0, v0, fs0<2d, clamp, linear, mipnone>
-
-        //output
-        mov ft1, fc0.xxxx
-
-        //size
-        mov ft2.x, fc0.y
-        mul ft2.x, ft2.x, fc0.w
-        rcp ft2.x, ft2.x
-        mov ft2.y, fc0.z
-        mul ft2.y, ft2.y, fc0.w
-        rcp ft2.y, ft2.y
-          
-        // START UNWRAPPED LOOP
-        
-        //1
-        mov ft3.xy, fc1.xx
-        mul ft3.xy, ft3.xy, ft2.xy
-        add ft3.xy, ft3.xy, v0.xy
-        tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
-        add ft1, ft1, ft4
-
-        //2
-        mov ft3.xy, fc1.xy
-        mul ft3.xy, ft3.xy, ft2.xy
-        add ft3.xy, ft3.xy, v0.xy
-        tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
-        add ft1, ft1, ft4
-
-        //3
-        mov ft3.xy, fc1.xz
-        mul ft3.xy, ft3.xy, ft2.xy
-        add ft3.xy, ft3.xy, v0.xy
-        tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
-        add ft1, ft1, ft4
-
-        //4
-        mov ft3.xy, fc1.yx
-        mul ft3.xy, ft3.xy, ft2.xy
-        add ft3.xy, ft3.xy, v0.xy
-        tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
-        add ft1, ft1, ft4
-
-        //5
-        mov ft3.xy, fc1.yy
-        mul ft3.xy, ft3.xy, ft2.xy
-        add ft3.xy, ft3.xy, v0.xy
-        tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
-        add ft1, ft1, ft4
-
-        //6
-        mov ft3.xy, fc1.yz
-        mul ft3.xy, ft3.xy, ft2.xy
-        add ft3.xy, ft3.xy, v0.xy
-        tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
-        add ft1, ft1, ft4
-
-        //7
-        mov ft3.xy, fc1.zx
-        mul ft3.xy, ft3.xy, ft2.xy
-        add ft3.xy, ft3.xy, v0.xy
-        tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
-        add ft1, ft1, ft4
-
-        //8
-        mov ft3.xy, fc1.zy
-        mul ft3.xy, ft3.xy, ft2.xy
-        add ft3.xy, ft3.xy, v0.xy
-        tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
-        add ft1, ft1, ft4
-
-        //9
-        mov ft3.xy, fc1.zz
-        mul ft3.xy, ft3.xy, ft2.xy
-        add ft3.xy, ft3.xy, v0.xy
-        tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
-        add ft1, ft1, ft4
-
-        // END LOOP
-        
-        // average out
-        div ft1, ft1, fc1.wwww
-        add ft1, ft1, ft0
-        
-        // multiply by color
-        mul oc, ft1, fc2 
-        
-        ]]>
-	
         private var fc0:Vector.<Number> = new <Number>[0, 0, 0, 2.5];
         private var fc1:Vector.<Number> = new <Number>[-1.0, 0.0, 1.0, 9.0];
-        private var mColor:Vector.<Number> = new <Number>[1.0, 1.0, 1.0, 1.0];
+        private var _color:Vector.<Number> = new <Number>[1.0, 1.0, 1.0, 1.0];
         
-        private var mRed:Number;
-        private var mGreen:Number;
-        private var mBlue:Number
+        private var _red:Number;
+        private var _green:Number;
+        private var _blue:Number
         
-        private var mBlur:Number;
-        
-        private var mShaderProgram:Program3D;
+        private var _blur:Number;
         
         /**
          * Create a new BloomFilter
@@ -149,24 +54,109 @@ package starling.filters
          */
         public function BloomFilter(blur:Number=2.5, red:Number=1, green:Number=1, blue:Number=1, numPasses:int=1)
         {
-            mBlur = blur;
-            mRed = red;
-            mGreen = green;
-            mBlue = blue;
+            _blur = blur;
+            _red = red;
+            _green = green;
+            _blue = blue;
+            
             this.numPasses = numPasses;
         }
         
-        /** Dispose */
-        public override function dispose():void
+        /** Set AGAL */
+        override protected function setAgal():void 
         {
-            if (mShaderProgram) mShaderProgram.dispose();
-            super.dispose();
-        }
-        
-        /** Create Shader program */
-        protected override function createPrograms():void
-        {
-            mShaderProgram = assembleAgal(FRAGMENT_SHADER);
+            FRAGMENT_SHADER =
+            <![CDATA[
+            
+            //original texture
+            tex ft0, v0, fs0<2d, clamp, linear, mipnone>
+            
+            //output
+            mov ft1, fc0.xxxx
+            
+            //size
+            mov ft2.x, fc0.y
+            mul ft2.x, ft2.x, fc0.w
+            rcp ft2.x, ft2.x
+            mov ft2.y, fc0.z
+            mul ft2.y, ft2.y, fc0.w
+            rcp ft2.y, ft2.y
+            
+            // START UNWRAPPED LOOP
+            
+            //1
+            mov ft3.xy, fc1.xx
+            mul ft3.xy, ft3.xy, ft2.xy
+            add ft3.xy, ft3.xy, v0.xy
+            tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
+            add ft1, ft1, ft4
+            
+            //2
+            mov ft3.xy, fc1.xy
+            mul ft3.xy, ft3.xy, ft2.xy
+            add ft3.xy, ft3.xy, v0.xy
+            tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
+            add ft1, ft1, ft4
+            
+            //3
+            mov ft3.xy, fc1.xz
+            mul ft3.xy, ft3.xy, ft2.xy
+            add ft3.xy, ft3.xy, v0.xy
+            tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
+            add ft1, ft1, ft4
+            
+            //4
+            mov ft3.xy, fc1.yx
+            mul ft3.xy, ft3.xy, ft2.xy
+            add ft3.xy, ft3.xy, v0.xy
+            tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
+            add ft1, ft1, ft4
+            
+            //5
+            mov ft3.xy, fc1.yy
+            mul ft3.xy, ft3.xy, ft2.xy
+            add ft3.xy, ft3.xy, v0.xy
+            tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
+            add ft1, ft1, ft4
+            
+            //6
+            mov ft3.xy, fc1.yz
+            mul ft3.xy, ft3.xy, ft2.xy
+            add ft3.xy, ft3.xy, v0.xy
+            tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
+            add ft1, ft1, ft4
+            
+            //7
+            mov ft3.xy, fc1.zx
+            mul ft3.xy, ft3.xy, ft2.xy
+            add ft3.xy, ft3.xy, v0.xy
+            tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
+            add ft1, ft1, ft4
+            
+            //8
+            mov ft3.xy, fc1.zy
+            mul ft3.xy, ft3.xy, ft2.xy
+            add ft3.xy, ft3.xy, v0.xy
+            tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
+            add ft1, ft1, ft4
+            
+            //9
+            mov ft3.xy, fc1.zz
+            mul ft3.xy, ft3.xy, ft2.xy
+            add ft3.xy, ft3.xy, v0.xy
+            tex ft4, ft3.xy, fs0<2d, clamp, linear, mipnone>
+            add ft1, ft1, ft4
+            
+            // END LOOP
+            
+            // average out
+            div ft1, ft1, fc1.wwww
+            add ft1, ft1, ft0
+            
+            // multiply by color
+            mul oc, ft1, fc2 
+            
+            ]]>
         }
         
         /** Activate */
@@ -174,34 +164,34 @@ package starling.filters
         {
             fc0[1] = texture.width;
             fc0[2] = texture.height;
-            fc0[3] = 1 / mBlur;
+            fc0[3] = 1 / _blur;
             
-            mColor[0] = mRed;
-            mColor[1] = mGreen;
-            mColor[2] = mBlue;
+            _color[0] = _red;
+            _color[1] = _green;
+            _color[2] = _blue;
             
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, fc0,    1);
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, fc1,    1);
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, mColor, 1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, _color, 1);
             
-            context.setProgram(mShaderProgram);
+            super.activate(pass, context, texture);
         }
         
         /** Red value */
-        public function get red():Number { return mRed; }
-        public function set red(value:Number):void { mRed = value; }
+        public function get red():Number { return _red; }
+        public function set red(value:Number):void { _red = value; }
         
         /** Green value */
-        public function get green():Number { return mGreen; }
-        public function set green(value:Number):void { mGreen = value; }
+        public function get green():Number { return _green; }
+        public function set green(value:Number):void { _green = value; }
         
         /** Blue value */
-        public function get blue():Number { return mBlue; }
-        public function set blue(value:Number):void { mBlue = value; }
+        public function get blue():Number { return _blue; }
+        public function set blue(value:Number):void { _blue = value; }
         
         /** Blur amount */
-        public function get blur():Number { return mBlur; }
-        public function set blur(value:Number):void { mBlur = value; }
+        public function get blur():Number { return _blur; }
+        public function set blur(value:Number):void { _blur = value; }
         
     }
 }
