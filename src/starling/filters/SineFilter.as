@@ -24,7 +24,6 @@ package starling.filters
 {
     import flash.display3D.Context3D;
     import flash.display3D.Context3DProgramType;
-    import flash.display3D.Program3D;
     import starling.textures.Texture;
     
     /**
@@ -32,35 +31,15 @@ package starling.filters
      * @author Devon O.
      */
 	
-    public class SineFilter extends FragmentFilter
+    public class SineFilter extends BaseFilter
     {
-        private static const FRAGMENT_SHADER:String =
-        <![CDATA[
-            mov ft0, v0
-            sub ft1.x, v0.y, fc0.z
-            mul ft1.x, ft1.x, fc0.w
-            sin ft1.x, ft1.x
-            mul ft1.x, ft1.x, fc0.y
-
-            // horizontal
-            mul ft1.y, ft1.x, fc1.x
-            add ft0.x, ft0.x, ft1.y
-
-            // vertical
-            mul ft1.z, ft1.x, fc1.y
-            add ft0.y, ft0.y, ft1.z
-
-            tex oc, ft0, fs0<2d, wrap, linear, mipnone>
-        ]]>
-		
-        private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
-        private var mBooleans:Vector.<Number> = new <Number>[1, 1, 1, 1];
-        private var mShaderProgram:Program3D;
-
-        private var mAmplitude:Number
-        private var mTicker:Number;
-        private var mFrequency:Number;
-        private var mIsHorizontal:Boolean = true;
+        private var vars:Vector.<Number> = new <Number>[1, 1, 1, 1];
+        private var booleans:Vector.<Number> = new <Number>[1, 1, 1, 1];
+        
+        private var _amplitude:Number
+        private var _ticker:Number;
+        private var _frequency:Number;
+        private var _isHorizontal:Boolean=true;
 		
         /**
          * Creates a new SineFilter
@@ -70,46 +49,64 @@ package starling.filters
          */
         public function SineFilter(amplitude:Number=0.0, frequency:Number=0.0, ticker:Number=0.0)
         {
-            mAmplitude  = amplitude;
-            mTicker     = ticker;
-            mFrequency  = frequency;
+            this._amplitude  = amplitude;
+            this._ticker     = ticker;
+            this._frequency  = frequency;
         }
         
-        public override function dispose():void
+        /** Set AGAL */
+        override protected function setAgal():void 
         {
-            if (mShaderProgram) mShaderProgram.dispose();
-            super.dispose();
+            FRAGMENT_SHADER =
+            <![CDATA[
+                mov ft0, v0
+                sub ft1.x, v0.y, fc0.z
+                mul ft1.x, ft1.x, fc0.w
+                sin ft1.x, ft1.x
+                mul ft1.x, ft1.x, fc0.y
+                
+                // horizontal
+                mul ft1.y, ft1.x, fc1.x
+                add ft0.x, ft0.x, ft1.y
+                
+                // vertical
+                mul ft1.z, ft1.x, fc1.y
+                add ft0.y, ft0.y, ft1.z
+                
+                tex oc, ft0, fs0<2d, wrap, linear, mipnone>
+            ]]>
         }
         
-        protected override function createPrograms():void
-        {
-            mShaderProgram = assembleAgal(FRAGMENT_SHADER);
-        }
-        
+        /** Activate */
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-            mVars[1] = mAmplitude / texture.height;
-            mVars[2] = mTicker;
-            mVars[3] = mFrequency ;
-
-            mBooleans[0] = int(mIsHorizontal);
-            mBooleans[1] = int(!mIsHorizontal);
-
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars,      1);
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mBooleans,  1);
-            context.setProgram(mShaderProgram);
+            this.vars[1] = this._amplitude / texture.height;
+            this.vars[2] = this._ticker;
+            this.vars[3] = this._frequency ;
+            
+            this.booleans[0] = int(this._isHorizontal);
+            this.booleans[1] = int(!this._isHorizontal);
+            
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, this.vars,      1);
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, this.booleans,  1);
+            
+            super.activate(pass, context, texture);
         }
         
-        public function get amplitude():Number { return mAmplitude; }
-        public function set amplitude(value:Number):void { mAmplitude = value; }
-
-        public function get ticker():Number { return mTicker; }
-        public function set ticker(value:Number):void { mTicker = value; }
-
-        public function get frequency():Number { return mFrequency; }
-        public function set frequency(value:Number):void { mFrequency = value; }
-
-        public function get isHorizontal():Boolean { return mIsHorizontal; }
-        public function set isHorizontal(value:Boolean):void { mIsHorizontal = value; }
+        /** Amplitude */
+        public function get amplitude():Number { return this._amplitude; }
+        public function set amplitude(value:Number):void { this._amplitude = value; }
+        
+        /** Ticker */
+        public function get ticker():Number { return this._ticker; }
+        public function set ticker(value:Number):void { this._ticker = value; }
+        
+        /** Frequency */
+        public function get frequency():Number { return this._frequency; }
+        public function set frequency(value:Number):void { this._frequency = value; }
+        
+        /** Is Horizontal */
+        public function get isHorizontal():Boolean { return this._isHorizontal; }
+        public function set isHorizontal(value:Boolean):void { this._isHorizontal = value; }
     }
 }
