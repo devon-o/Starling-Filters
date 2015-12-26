@@ -24,60 +24,52 @@ package starling.filters
 {
     import flash.display3D.Context3D;
     import flash.display3D.Context3DProgramType;
-    import flash.display3D.Program3D;
     import starling.textures.Texture;
 	
     /**
      * Pixelates images (square 'pixels')
      * @author Devon O.
      */
-    
-    public class PixelateFilter extends FragmentFilter
+    public class PixelateFilter extends BaseFilter
     {
-        private static const FRAGMENT_SHADER:String =
-        <![CDATA[
-            div ft0, v0, fc0
-            frc ft1, ft0
-            sub ft0, ft0, ft1
-            mul ft0, ft0, fc0
-            tex oc, ft0, fs0<2d, clamp, linear, mipnone>
-        ]]>
-		
-        private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
-        private var mShaderProgram:Program3D;
-
-        private var mPixelSize:int;
+        
+        private var vars:Vector.<Number> = new <Number>[1, 1, 1, 1];
+        private var _size:int;
         
         /**
          * Creates a new PixelateFilter
-         * @param       pixelSize	size of pixel effect
+         * @param   size	size of pixel effect
          */
-        public function PixelateFilter(pixelSize:int=8)
+        public function PixelateFilter(size:int=8)
         {
-            mPixelSize = pixelSize;
+            this._size = size;
         }
         
-        public override function dispose():void
+        /** Set AGAL */
+        protected override function setAgal():void
         {
-            if (mShaderProgram) mShaderProgram.dispose();
-            super.dispose();
+            FRAGMENT_SHADER =
+            <![CDATA[
+                div ft0, v0, fc0
+                frc ft1, ft0
+                sub ft0, ft0, ft1
+                mul ft0, ft0, fc0
+                tex oc, ft0, fs0<2d, clamp, linear, mipnone>
+            ]]>
         }
         
-        protected override function createPrograms():void
-        {
-            mShaderProgram = assembleAgal(FRAGMENT_SHADER);
-        }
-        
+        /** Activate */
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-            mVars[0] = mPixelSize / texture.width;
-            mVars[1] = mPixelSize / texture.height;
-
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars, 1);
-            context.setProgram(mShaderProgram);
+            this.vars[0] = this._size / texture.width;
+            this.vars[1] = this._size / texture.height;
+            
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, this.vars, 1);
+            super.activate(pass, context, texture);
         }
         
-        public function get pixelSize():int { return mPixelSize; }
-        public function set pixelSize(value:int):void { mPixelSize = value; }
+        /** Pixel Size */
+        public function get pixelSize():int { return _size; }
+        public function set pixelSize(value:int):void { _size = value; }
     }
 }
