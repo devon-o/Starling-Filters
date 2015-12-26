@@ -24,7 +24,6 @@ package starling.filters
 {
     import flash.display3D.Context3D;
     import flash.display3D.Context3DProgramType;
-    import flash.display3D.Program3D;
     import starling.textures.Texture;
 
     /**
@@ -32,63 +31,55 @@ package starling.filters
      * @author Devon O.
      */
 	
-    public class GlassFilter extends FragmentFilter
+    public class GlassFilter extends BaseFilter
     {
-        private static const FRAGMENT_SHADER:String =
-        <![CDATA[
-            mov ft0.xy, v0.xy
-            mul ft1.x, ft0.x, fc0.y
-            sin ft1.x, ft1.x		
-            mul ft1.x, ft1.x, fc0.x
-            mul ft1.y, ft0.y, fc0.y
-            sin ft1.y, ft1.y		
-            mul ft1.y, ft1.y, fc0.x
-            add ft0.xy, ft0.xy, ft1.xy
-            tex oc, ft0.xy, fs0<2d, clamp, linear, mipnone>
-        ]]>
-		
-        private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
-        private var mShaderProgram:Program3D;
-
-        private var mAmount:Number;
-        private var mRipple:Number;
+        private var vars:Vector.<Number> = new <Number>[1, 1, 1, 1];
+        
+        private var _amount:Number;
+        private var _ripple:Number;
         
         /**
-         * 
+         * Create a new GlassFilter effect
          * @param	amount		Amount of effect (0 - 1)
          * @param	ripple		Amount of ripple to apply
          */
         public function GlassFilter(amount:Number=0.0, ripple:Number=0.0)
         {
-            mAmount = amount;
-            mRipple = ripple;
+            _amount = amount;
+            _ripple = ripple;
         }
         
-        public override function dispose():void
+        /** Set AGAL */
+        override protected function setAgal():void 
         {
-            if (mShaderProgram) mShaderProgram.dispose();
-            super.dispose();
+            FRAGMENT_SHADER =
+            <![CDATA[
+                mul ft0.xy, v0.xy, fc0.yy
+                sin ft0.xy, ft0.xy
+                mul ft0.xy, ft0.xy, fc0.xx
+                
+                add ft0.xy, v0.xy, ft0.xy
+                tex oc, ft0.xy, fs0<2d, clamp, linear, mipnone>
+            ]]>
         }
         
-        protected override function createPrograms():void
-        {
-            mShaderProgram = assembleAgal(FRAGMENT_SHADER);
-        }
-        
+        /** Activate */
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-            mVars[0] = mAmount / 100;
-            mVars[1] = mRipple ;
-
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars, 1);
-            context.setProgram(mShaderProgram);
+            this.vars[0] = _amount / 100;
+            this.vars[1] = _ripple ;
+            
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, this.vars, 1);
+            
+            super.activate(pass, context, texture);
         }
         
-        public function get ripple():Number { return mRipple; }
-        public function set ripple(value:Number):void { mRipple = value; }
-
-        /** 0 - 1 */
-        public function get amount():Number { return mAmount; }
-        public function set amount(value:Number):void { mAmount = value; }
+        /** Ripple */
+        public function get ripple():Number { return _ripple; }
+        public function set ripple(value:Number):void { _ripple = value; }
+        
+        /** Amount (0 - 1) */
+        public function get amount():Number { return _amount; }
+        public function set amount(value:Number):void { _amount = value; }
     }
 }
