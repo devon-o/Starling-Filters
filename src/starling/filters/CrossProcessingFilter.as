@@ -6,7 +6,7 @@ package starling.filters
     import starling.textures.Texture;
     
 	/**
-     * ...
+     * Cross Processing effect
      * @author Devon O.
      */
     public class CrossProcessingFilter extends BaseFilter
@@ -19,11 +19,13 @@ package starling.filters
         
         private var _amount:Number;
         
+        /** Create a new CrossProcessingFilter */
         public function CrossProcessingFilter() 
         {
             this.sample = Texture.fromBitmap(new SAMPLE_SOURCE(), false);
         }
         
+        /** Dispose */
         override public function dispose():void 
         {
             this.sample.dispose();
@@ -37,8 +39,6 @@ package starling.filters
             <![CDATA[
             
             tex ft0, v0, fs0<2d, clamp, linear, mipnone>
-            
-            // ft3 = curves color
             
             mov ft1.y, fc0.y
             
