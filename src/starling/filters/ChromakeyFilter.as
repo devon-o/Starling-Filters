@@ -25,7 +25,6 @@ package starling.filters
     import flash.display3D.Context3D;
     import flash.display3D.Context3DBlendFactor;
     import flash.display3D.Context3DProgramType;
-    import flash.display3D.Program3D;
     import starling.textures.Texture;
 	
     /**
@@ -33,30 +32,12 @@ package starling.filters
      * @author Devon O.
      */
     
-    public class ChromakeyFilter extends FragmentFilter
+    public class ChromakeyFilter extends BaseFilter
     {
-		
-        private static const FRAGMENT_SHADER:String =
-        <![CDATA[
-            tex ft0, v0, fs0<2d, repeat, linear, nomip>
-            sub ft2.x, ft0.x, fc0.x	
-            mul ft2.x, ft2.x, ft2.x	
-            sub ft2.y, ft0.y, fc0.y
-            mul ft2.y, ft2.y, ft2.y	
-            sub ft2.z, ft0.z, fc0.z
-            mul ft2.z, ft2.z, ft2.z	
-            add ft2.w, ft2.x, ft2.y
-            add ft2.w, ft2.w, ft2.z	
-            sqt ft1.x, ft2.w
-            sge ft0.w, ft1.x, fc0.w
-            mov oc, ft0
-        ]]>
-        
-        private var mShaderProgram:Program3D;
-        private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
+        private var _vars:Vector.<Number> = new <Number>[1, 1, 1, 1];
 
-        private var mColor:ColorObject;
-        private var mThreshold:Number;
+        private var _color:ColorObject;
+        private var _threshold:Number;
         
         /**
          * @param	color		The color to remove
@@ -64,43 +45,57 @@ package starling.filters
          */
         public function ChromakeyFilter(color:uint=0x00FF00, threshold:Number=.25)
         {
-            mColor = new ColorObject(color);
-            mThreshold = threshold;
+            _color = new ColorObject(color);
+            _threshold = threshold;
         }
         
-        public override function dispose():void
+        /** Set AGAL */
+        override protected function setAgal():void 
         {
-            if (mShaderProgram) mShaderProgram.dispose();
-            super.dispose();
+            FRAGMENT_SHADER =
+            <![CDATA[
+                tex ft0, v0, fs0<2d, repeat, linear, nomip>
+                sub ft2.x, ft0.x, fc0.x	
+                mul ft2.x, ft2.x, ft2.x	
+                sub ft2.y, ft0.y, fc0.y
+                mul ft2.y, ft2.y, ft2.y	
+                sub ft2.z, ft0.z, fc0.z
+                mul ft2.z, ft2.z, ft2.z	
+                add ft2.w, ft2.x, ft2.y
+                add ft2.w, ft2.w, ft2.z	
+                sqt ft1.x, ft2.w
+                sge ft0.w, ft1.x, fc0.w
+                mov oc, ft0
+            ]]>
         }
         
-        protected override function createPrograms():void
-        {
-            mShaderProgram = assembleAgal(FRAGMENT_SHADER);
-        }
-        
+        /** Activate */
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-            mVars[0] = mColor.r;
-            mVars[1] = mColor.g;
-            mVars[2] = mColor.b;
-            mVars[3] = mThreshold;
-
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars, 1);
+            _vars[0] = _color.r;
+            _vars[1] = _color.g;
+            _vars[2] = _color.b;
+            _vars[3] = _threshold;
+            
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, _vars, 1);
             context.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
-            context.setProgram(mShaderProgram);
+            
+            super.activate(pass, context, texture);
         }
 		
+        /** Deactivate */
         override protected function deactivate(pass:int, context:Context3D, texture:Texture):void 
         {
             context.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO);
         }
 		
-        public function set color(value:uint):void { mColor.setColor(value); }
-        public function get color():uint { return mColor.getColor(); }
-
-        public function set threshold(value:Number):void { mThreshold = value; }
-        public function get threshold():Number { return mThreshold; }
+        /** Color */
+        public function set color(value:uint):void { _color.setColor(value); }
+        public function get color():uint { return _color.getColor(); }
+        
+        /** Threshold */
+        public function set threshold(value:Number):void { _threshold = value; }
+        public function get threshold():Number { return _threshold; }
     }
 }
 
@@ -120,7 +115,7 @@ class ColorObject
         var red:uint    = color >> 16;
         var green:uint  = color >> 8 & 0xFF;
         var blue:uint   = color & 0xFF;
-
+        
         r = red / 0xFF;
         g = green / 0xFF;
         b = blue / 0xFF;
