@@ -24,60 +24,26 @@ package starling.filters
 {
     import flash.display3D.Context3D;
     import flash.display3D.Context3DProgramType;
-    import flash.display3D.Program3D;
     import starling.textures.Texture;
 	
     /**
      * Produces a Black and White "Ansel Adams" type effect
      * @author Devon O.
      */
-    public class AnselFilter extends FragmentFilter
+    public class AnselFilter extends BaseFilter
     {
-        private static const FRAGMENT_SHADER:String =
-        <![CDATA[
-        
-        tex ft0, v0, fs0<2d, clamp, linear, mipnone>
-
-        // exposure 
-        exp ft1, ft0
-        mul ft1, ft1, fc0.xxxx
-        mul ft0, ft0, ft1
-
-        // coefficients * luma
-        mov ft1.xyz, fc2.xyz
-        mul ft1.xyz, ft1.xyz, fc1.xyz
-        mov ft1.w, fc1.w
-
-        dp3 ft2.x, ft0, ft1
-        mov ft2.yzw, ft2.xxx
-        
-        // out * brightness
-        mul ft2.xyz, ft2.xyz, fc0.yyy
-        
-        // scale and bias (for maximum contrast)
-        add ft2.xyz, ft2.xyz, fc3.yyy
-        max ft2.xyz, ft2.xyz, fc1.www
-        mul ft2.xyz, ft2.xyz, fc3.xxx
-        
-        mov ft2.w, ft0.w
-        mov oc, ft2
-        
-        ]]>
-        
         private var fc0:Vector.<Number> = new <Number>[1.0, 1.0, 1.0, 1.0];
         private var fc1:Vector.<Number> = new <Number>[0.299, 0.587, 0.114, 0];
         private var fc2:Vector.<Number> = new <Number>[1.0, 1.0, 1.0, 1.0];
         private var fc3:Vector.<Number> = new <Number>[1.0, 1.0, 1.0, 1.0];
         
-        private var mShaderProgram:Program3D;
-
-        private var mExposure:Number;
-        private var mBrightness:Number;
-        private var mScale:Number;
-        private var mBias:Number;
-        private var mRedCoeff:Number=1.0;
-        private var mGreenCoeff:Number=1.0;
-        private var mBlueCoeff:Number=1.0;
+        private var _exposure:Number;
+        private var _brightness:Number;
+        private var _scale:Number;
+        private var _bias:Number;
+        private var _redCoeff:Number=1.0;
+        private var _greenCoeff:Number=1.0;
+        private var _blueCoeff:Number=1.0;
  
         /**
          * Create a new Ansel filter
@@ -88,73 +54,95 @@ package starling.filters
          */
         public function AnselFilter(exposure:Number=1, brightness:Number=1, scale:Number=1, bias:Number=0)
         {
-            mExposure = exposure;
-            mBrightness = brightness;
-            mScale = scale;
-            mBias = bias;
+            _exposure = exposure;
+            _brightness = brightness;
+            _scale = scale;
+            _bias = bias;
         }
         
-        /** Dispose */
-        public override function dispose():void
+        /** Set AGAL */
+        override protected function setAgal():void 
         {
-            if (mShaderProgram) mShaderProgram.dispose();
-            super.dispose();
-        }
-        
-        /** Create Shader program */
-        protected override function createPrograms():void
-        {
-            mShaderProgram = assembleAgal(FRAGMENT_SHADER);
+            FRAGMENT_SHADER =
+            <![CDATA[
+            
+            tex ft0, v0, fs0<2d, clamp, linear, mipnone>
+            
+            // exposure 
+            exp ft1, ft0
+            mul ft1, ft1, fc0.xxxx
+            mul ft0, ft0, ft1
+            
+            // coefficients * luma
+            mov ft1.xyz, fc2.xyz
+            mul ft1.xyz, ft1.xyz, fc1.xyz
+            mov ft1.w, fc1.w
+            
+            dp3 ft2.x, ft0, ft1
+            mov ft2.yzw, ft2.xxx
+            
+            // out * brightness
+            mul ft2.xyz, ft2.xyz, fc0.yyy
+            
+            // scale and bias (for maximum contrast)
+            add ft2.xyz, ft2.xyz, fc3.yyy
+            max ft2.xyz, ft2.xyz, fc1.www
+            mul ft2.xyz, ft2.xyz, fc3.xxx
+            
+            mov ft2.w, ft0.w
+            mov oc, ft2
+            
+            ]]>
         }
         
         /** Activate */
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-            fc0[0] = mExposure;
-            fc0[1] = mBrightness;
+            fc0[0] = _exposure;
+            fc0[1] = _brightness;
             
-            fc2[0] = mRedCoeff;
-            fc2[1] = mGreenCoeff;
-            fc2[2] = mBlueCoeff;
+            fc2[0] = _redCoeff;
+            fc2[1] = _greenCoeff;
+            fc2[2] = _blueCoeff;
             
-            fc3[0] = mScale;
-            fc3[1] = mBias;
+            fc3[0] = _scale;
+            fc3[1] = _bias;
             
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, fc0, 1);
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, fc1, 1);
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, fc2, 1);
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 3, fc3, 1);
             
-            context.setProgram(mShaderProgram);
+            super.activate(pass, context, texture);
         }
         
         /** Exposure */
-        public function get exposure():Number { return mExposure; }
-        public function set exposure(value:Number):void { mExposure = value; }
+        public function get exposure():Number { return _exposure; }
+        public function set exposure(value:Number):void { _exposure = value; }
         
         /** Brightness */
-        public function get brightness():Number { return mBrightness; }
-        public function set brightness(value:Number):void { mBrightness = value; }
+        public function get brightness():Number { return _brightness; }
+        public function set brightness(value:Number):void { _brightness = value; }
         
         /** Scale */
-        public function get scale():Number { return mScale; }
-        public function set scale(value:Number):void { mScale = value; }
+        public function get scale():Number { return _scale; }
+        public function set scale(value:Number):void { _scale = value; }
         
         /** Bias */
-        public function get bias():Number { return mBias; }
-        public function set bias(value:Number):void { mBias = value; }
+        public function get bias():Number { return _bias; }
+        public function set bias(value:Number):void { _bias = value; }
         
         /** Red Coefficient */
-        public function get redCoeff():Number { return mRedCoeff; }
-        public function set redCoeff(value:Number):void { mRedCoeff = value; }
+        public function get redCoeff():Number { return _redCoeff; }
+        public function set redCoeff(value:Number):void { _redCoeff = value; }
         
         /** Green Coefficient */
-        public function get greenCoeff():Number { return mGreenCoeff; }
-        public function set greenCoeff(value:Number):void { mGreenCoeff = value; }
+        public function get greenCoeff():Number { return _greenCoeff; }
+        public function set greenCoeff(value:Number):void { _greenCoeff = value; }
         
         /** Blue Coefficient */
-        public function get blueCoeff():Number { return mBlueCoeff; }
-        public function set blueCoeff(value:Number):void { mBlueCoeff = value; }
+        public function get blueCoeff():Number { return _blueCoeff; }
+        public function set blueCoeff(value:Number):void { _blueCoeff = value; }
         
     }
 }
