@@ -24,7 +24,6 @@ package starling.filters
 {
     import flash.display3D.Context3D;
     import flash.display3D.Context3DProgramType;
-    import flash.display3D.Program3D;
     import starling.textures.Texture;
 	
     /**
@@ -33,14 +32,14 @@ package starling.filters
      * @author Devon O.
      */
     
-    public class MotionBlurFilter extends FragmentFilter
+    public class MotionBlurFilter extends BaseFilter
     {
-        private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
-        private var mShaderProgram:Program3D;
-
-        private var mSteps:int;
-        private var mAmount:Number;
-        private var mAngle:Number;
+        private var vars:Vector.<Number> = new <Number>[1, 1, 1, 1];
+        
+        private var steps:int;
+        
+        private var _amount:Number;
+        private var _angle:Number;
 		
         /**
          * Creates a new MotionBlurFilter
@@ -50,54 +49,53 @@ package starling.filters
          */
         public function MotionBlurFilter(angle:Number=0.0, amount:Number=1.0, steps:int=5, numPasses:int=1)
         {
-            mAngle  = angle;
-            mAmount = clamp(amount, 0.0, 20.0);
-            mSteps  = int(clamp(steps, 1.0, 30.0));
+            this._angle  = angle;
+            this._amount = clamp(amount, 0.0, 20.0);
+            
+            this.steps  = int(clamp(steps, 1.0, 30.0));
             
             this.numPasses = numPasses;
             
-            marginX = marginY = mAmount * mSteps;
+            marginX = marginY = _amount * this.steps;
         }
         
-        public override function dispose():void
-        {
-            if (mShaderProgram) mShaderProgram.dispose();
-            super.dispose();
-        }
-        
-        protected override function createPrograms():void
+        /** Set AGAL */
+        protected override function setAgal():void
         {
             var step:String = 
                 "add ft0.xy, ft0.xy, fc0.xy \n"+
                 "tex ft2, ft0.xy, fs0<2d, clamp, linear, nomip> \n" +
                 "add ft1, ft1, ft2 \n"
-
+                
             var fragmentProgramCode:String = 
                 "mov ft0.xy, v0.xy \n" +
                 "tex ft1, ft0.xy, fs0<2d, clamp, linear, nomip> \n"
                     
-            var numSteps:int = mSteps - 1;
+            var numSteps:int = this.steps - 1;
             for (var i:int = 0; i < numSteps; i++)
             {
                 fragmentProgramCode += step;
             }
-
-            fragmentProgramCode += "div oc, ft1, fc0.zzz" 
-
-            mShaderProgram = assembleAgal(fragmentProgramCode);
+            
+            fragmentProgramCode += "div oc, ft1, fc0.zzz";
+            
+            FRAGMENT_SHADER = fragmentProgramCode;
         }
         
+        /** Activate */
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
             var tSize:Number = (texture.width + texture.height) * .50;
-            mVars[0] = mAmount * Math.cos(mAngle) / tSize;
-            mVars[1] = mAmount * Math.sin(mAngle) / tSize;
-            mVars[2] = mSteps;
-
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars, 1);
-            context.setProgram(mShaderProgram);
+            this.vars[0] = this._amount * Math.cos(this._angle) / tSize;
+            this.vars[1] = this._amount * Math.sin(this._angle) / tSize;
+            this.vars[2] = this.steps;
+            
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, this.vars, 1);
+            
+            super.activate(pass, context, texture);
         }
 		
+        /** Clamp target between min and max */
         private function clamp(target:Number, min:Number, max:Number):Number 
         {
             if (target < min) target = min;
@@ -105,14 +103,16 @@ package starling.filters
             return target;
         }
         
-        public function get angle():Number { return mAngle; }
-        public function set angle(value:Number):void { mAngle = value; }
-
-        public function get amount():Number { return mAmount; }
+        /** Angle */
+        public function get angle():Number { return _angle; }
+        public function set angle(value:Number):void { _angle = value; }
+        
+        /** Amount */
+        public function get amount():Number { return _amount; }
         public function set amount(value:Number):void 
         { 
-            mAmount = clamp(value, 0, 20);
-            marginX = marginY = mAmount * mSteps ;
+            _amount = clamp(value, 0, 20);
+            marginX = marginY = _amount * this.steps ;
         }
     }
 }
