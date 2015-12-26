@@ -24,7 +24,6 @@ package starling.filters
 {
     import flash.display3D.Context3D;
     import flash.display3D.Context3DProgramType;
-    import flash.display3D.Program3D;
     import starling.textures.Texture;
 	
     /**
@@ -32,25 +31,12 @@ package starling.filters
      * @author Devon O.
      */
     
-    public class PosterizeFilter extends FragmentFilter
+    public class PosterizeFilter extends BaseFilter
     {
-        private static const FRAGMENT_SHADER:String =
-        <![CDATA[
-            tex ft0, v0, fs0<2d, clamp, linear, mipnone>
-            pow ft0.xyz, ft0.xyz, fc0.yyy
-            mul ft0.xyz, ft0.xyz, fc0.xxx
-            frc ft1.xyz, ft0.xyz
-            sub ft1.xyz, ft0.xyz, ft1.xyz
-            div ft0.xyz, ft1.xyz, fc0.xxx
-            pow ft0.xyz, ft0.xyz, fc0.zzz
-            mov oc, ft0
-        ]]>
-		
-        private var mVars:Vector.<Number> = new <Number>[1, 1, 1, 1];
-        private var mShaderProgram:Program3D;
-
-        private var mNumColors:int;
-        private var mGamma:Number;
+        private var vars:Vector.<Number> = new <Number>[1, 1, 1, 1];
+        
+        private var _numColors:int;
+        private var _gamma:Number;
         
         /**
          * 
@@ -59,35 +45,43 @@ package starling.filters
          */
         public function PosterizeFilter(numColors:int=8, gamma:Number=.60)
         {
-            mNumColors = numColors;
-            mGamma = gamma;
+            this._numColors = numColors;
+            this._gamma = gamma;
         }
         
-        public override function dispose():void
+        /** Set AGAL */
+        protected override function setAgal():void
         {
-            if (mShaderProgram) mShaderProgram.dispose();
-            super.dispose();
+            FRAGMENT_SHADER =
+            <![CDATA[
+                tex ft0, v0, fs0<2d, clamp, linear, mipnone>
+                pow ft0.xyz, ft0.xyz, fc0.yyy
+                mul ft0.xyz, ft0.xyz, fc0.xxx
+                frc ft1.xyz, ft0.xyz
+                sub ft1.xyz, ft0.xyz, ft1.xyz
+                div ft0.xyz, ft1.xyz, fc0.xxx
+                pow ft0.xyz, ft0.xyz, fc0.zzz
+                mov oc, ft0
+            ]]>
         }
         
-        protected override function createPrograms():void
-        {
-            mShaderProgram = assembleAgal(FRAGMENT_SHADER);
-        }
-        
+        /** Activate */
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-            mVars[0] = mNumColors;
-            mVars[1] = mGamma;
-            mVars[2] = 1 / mGamma;
-
-            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mVars, 1);
-            context.setProgram(mShaderProgram);
+            this.vars[0] = this._numColors;
+            this.vars[1] = this._gamma;
+            this.vars[2] = 1 / this._gamma;
+            
+            context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, this.vars, 1);
+            super.activate(pass, context, texture);
         }
         
-        public function get numColors():int { return mNumColors; }
-        public function set numColors(value:int):void { mNumColors = value; }
-
-        public function get gamma():Number { return mGamma; }
-        public function set gamma(value:Number):void { mGamma = value; }
+        /** Number of Colors */
+        public function get numColors():int { return _numColors; }
+        public function set numColors(value:int):void { _numColors = value; }
+        
+        /** Gamma */
+        public function get gamma():Number { return _gamma; }
+        public function set gamma(value:Number):void { _gamma = value; }
     }
 }
