@@ -24,7 +24,6 @@ package starling.filters
 {
     import flash.display3D.Context3D;
     import flash.display3D.Context3DProgramType;
-    import flash.display3D.Program3D;
     import starling.textures.Texture;
 	
     /**
@@ -32,38 +31,9 @@ package starling.filters
      * @author Devon O.
      */
  
-    public class VignetteFilter extends FragmentFilter
+    public class VignetteFilter extends BaseFilter
     {
-        private static const FRAGMENT_SHADER:String =
-        <![CDATA[
-            sub ft0.xy, v0.xy, fc0.xy
-            mov ft2.x, fc1.w
-            mul ft2.x, ft2.x, fc1.z
-            sub ft3.xy, ft0.xy, ft2.x   
-            mul ft4.x, ft3.x, ft3.x
-            mul ft4.y, ft3.y, ft3.y
-            add ft4.x, ft4.x, ft4.y
-            sqt ft4.x, ft4.x
-            dp3 ft4.y, ft2.xx, ft2.xx
-            sqt ft4.y, ft4.y
-            div ft5.x, ft4.x, ft4.y
-            pow ft5.y, ft5.x, fc1.y
-            mul ft5.z, fc1.x, ft5.y
-            sat ft5.z, ft5.z
-            min ft5.z, ft5.z, fc0.z
-            sub ft6, fc0.z, ft5.z
-            tex ft1, v0, fs0<2d, clamp, linear, mipnone>
-            
-            // sepia  
-            dp3 ft2.x, ft1, fc2
-            dp3 ft2.y, ft1, fc3
-            dp3 ft2.z, ft1, fc4
-            
-            mul ft6.xyz, ft6.xyz, ft2.xyz
-            mov ft6.w, ft1.w
-            mov oc, ft6
-        ]]>
-	
+        
         private var mCenter:Vector.<Number> = new <Number>[1, 1, 1, 1];
         private var mVars:Vector.<Number> = new <Number>[.50, .50, .50, .50];
         
@@ -75,14 +45,12 @@ package starling.filters
         private var mNoSepia2:Vector.<Number> = new <Number>[0.0, 1.0, 0.0, 0.000];
         private var mNoSepia3:Vector.<Number> = new <Number>[0.0, 0.0, 1.0, 0.000];
         
-        private var mShaderProgram:Program3D;
-
-        private var mCenterX:Number;
-        private var mCenterY:Number;
-        private var mAmount:Number;
-        private var mSize:Number;
-        private var mRadius:Number;
-        private var mUseSepia:Boolean = false;
+        private var _centerX:Number;
+        private var _centerY:Number;
+        private var _amount:Number;
+        private var _size:Number;
+        private var _radius:Number;
+        private var _useSepia:Boolean;
  
         /**
          * Creates a new VignetteFilter
@@ -95,76 +63,97 @@ package starling.filters
          */
         public function VignetteFilter(cx:Number=0.0, cy:Number=0.0, amount:Number=0.7, radius:Number=1.0, size:Number=.40, sepia:Boolean=false)
         {
-            mCenterX    = cx;
-            mCenterY    = cy;
-            mAmount     = amount;
-            mRadius     = radius;
-            mSize       = size;
-            mUseSepia   = sepia;
+            this._centerX    = cx;
+            this._centerY    = cy;
+            this._amount     = amount;
+            this._radius     = radius;
+            this._size       = size;
+            this._useSepia   = sepia;
         }
         
-        /** Dispose */
-        public override function dispose():void
+        /** Set AGAL */
+        override protected function setAgal():void 
         {
-            if (mShaderProgram) mShaderProgram.dispose();
-            super.dispose();
-        }
-        
-        /** Create Shader program */
-        protected override function createPrograms():void
-        {
-            mShaderProgram = assembleAgal(FRAGMENT_SHADER);
+            FRAGMENT_SHADER =
+            <![CDATA[
+                sub ft0.xy, v0.xy, fc0.xy
+                mov ft2.x, fc1.w
+                mul ft2.x, ft2.x, fc1.z
+                sub ft3.xy, ft0.xy, ft2.x   
+                mul ft4.x, ft3.x, ft3.x
+                mul ft4.y, ft3.y, ft3.y
+                add ft4.x, ft4.x, ft4.y
+                sqt ft4.x, ft4.x
+                dp3 ft4.y, ft2.xx, ft2.xx
+                sqt ft4.y, ft4.y
+                div ft5.x, ft4.x, ft4.y
+                pow ft5.y, ft5.x, fc1.y
+                mul ft5.z, fc1.x, ft5.y
+                sat ft5.z, ft5.z
+                min ft5.z, ft5.z, fc0.z
+                sub ft6, fc0.z, ft5.z
+                tex ft1, v0, fs0<2d, clamp, linear, mipnone>
+                
+                // sepia  
+                dp3 ft2.x, ft1, fc2
+                dp3 ft2.y, ft1, fc3
+                dp3 ft2.z, ft1, fc4
+                
+                mul ft6.xyz, ft6.xyz, ft2.xyz
+                mov ft6.w, ft1.w
+                mov oc, ft6
+            ]]>
         }
         
         /** Activate */
         protected override function activate(pass:int, context:Context3D, texture:Texture):void
         {
-            var halfSize:Number = mSize * .50;
-            var cx:Number = mCenterX / texture.width - halfSize;
-            var cy:Number = mCenterY / texture.height - halfSize;
+            var halfSize:Number = this._size * .50;
+            var cx:Number = this._centerX / texture.width - halfSize;
+            var cy:Number = this._centerY / texture.height - halfSize;
             mCenter[0] = cx;
             mCenter[1] = cy;
             
-            mVars[0] = mAmount;
-            mVars[1] = mRadius;
-            mVars[3] = mSize;
+            mVars[0] = this._amount;
+            mVars[1] = this._radius;
+            mVars[3] = this._size;
             
             // to sepia or not to sepia
             var s1:Vector.<Number> = useSepia ? mSepia1 : mNoSepia1;
             var s2:Vector.<Number> = useSepia ? mSepia2 : mNoSepia2;
             var s3:Vector.<Number> = useSepia ? mSepia3 : mNoSepia3;
-
+            
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, mCenter, 1);
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, mVars,   1);
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 2, s1,      1);
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 3, s2,      1);
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 4, s3,      1);
             
-            context.setProgram(mShaderProgram);
+            super.activate(pass, context, texture);
         }
         
         /** Center X position of effect relative to Display Object being filtered */
-        public function get centerX():Number { return mCenterX; }
-        public function set centerX(value:Number):void { mCenterX = value; }
+        public function get centerX():Number { return this._centerX; }
+        public function set centerX(value:Number):void { this._centerX = value; }
         
         /** Center Y position of effect relative to Display Object being filtered */
-        public function get centerY():Number { return mCenterY; }
-        public function set centerY(value:Number):void { mCenterY = value; }
+        public function get centerY():Number { return this._centerY; }
+        public function set centerY(value:Number):void { this._centerY = value; }
         
         /** Amount of effect (smaller value is less noticeable) */
-        public function get amount():Number { return mAmount; }
-        public function set amount(value:Number):void { mAmount = value; }
+        public function get amount():Number { return this._amount; }
+        public function set amount(value:Number):void { this._amount = value; }
         
         /** Size of effect */
-        public function get size():Number { return mSize; }
-        public function set size(value:Number):void { mSize = value; }
+        public function get size():Number { return this._size; }
+        public function set size(value:Number):void { this._size = value; }
         
         /** Radius of vignette center */
-        public function get radius():Number { return mRadius; }
-        public function set radius(value:Number):void { mRadius = value; }
+        public function get radius():Number { return this._radius; }
+        public function set radius(value:Number):void { this._radius = value; }
         
         /** Apply a sepia color to Display Object being filtered */
-        public function get useSepia():Boolean { return mUseSepia; }
-        public function set useSepia(value:Boolean):void { mUseSepia = value; }
+        public function get useSepia():Boolean { return this._useSepia; }
+        public function set useSepia(value:Boolean):void { this._useSepia = value; }
     }
 }
