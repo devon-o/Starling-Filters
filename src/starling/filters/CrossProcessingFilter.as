@@ -35,7 +35,9 @@ public class CrossProcessingFilter extends FragmentFilter
     
     /** Create a new CrossProcessing Filter */
     public function CrossProcessingFilter() 
-    {}
+    {
+        super();
+    }
     
     /** Amount */
     public function set amount(value:Number):void
