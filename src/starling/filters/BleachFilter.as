@@ -48,11 +48,8 @@ public class BleachFilter extends FragmentFilter
     public function set amount(value:Number):void 
     {
         this._amount = value;
-        if (this.effect != null)
-        {
-            (this.effect as BleachEffect).amount = value;
-            setRequiresRedraw();
-        }
+        (this.effect as BleachEffect).amount = value;
+        setRequiresRedraw();
     }
     public function get amount():Number { return this._amount; }
     

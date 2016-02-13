@@ -62,11 +62,8 @@ public class VignetteFilter extends FragmentFilter
     public function set centerX(value:Number):void
     {
         this._centerX = value;
-        if (this.effect != null)
-        {
-            (this.effect as VignetteEffect).centerX = value;
-            setRequiresRedraw();
-        }
+        (this.effect as VignetteEffect).centerX = value;
+        setRequiresRedraw();
     }
     public function get centerX():Number { return this._centerX; }
     
@@ -74,11 +71,8 @@ public class VignetteFilter extends FragmentFilter
     public function set centerY(value:Number):void
     {
         this._centerY = value;
-        if (this.effect != null)
-        {
-            (this.effect as VignetteEffect).centerY = value;
-            setRequiresRedraw();
-        }
+        (this.effect as VignetteEffect).centerY = value;
+        setRequiresRedraw();
     }
     public function get centerY():Number { return this._centerY; }
     
@@ -86,11 +80,8 @@ public class VignetteFilter extends FragmentFilter
     public function set amount(value:Number):void
     {
         this._amount = value;
-        if (this.effect != null)
-        {
-            (this.effect as VignetteEffect).amount = value;
-            setRequiresRedraw();
-        }
+        (this.effect as VignetteEffect).amount = value;
+        setRequiresRedraw();
     }
     public function get amount():Number { return this._amount; }
     
@@ -98,11 +89,8 @@ public class VignetteFilter extends FragmentFilter
     public function set radius(value:Number):void
     {
         this._radius = value;
-        if (this.effect != null)
-        {
-            (this.effect as VignetteEffect).radius = value;
-            setRequiresRedraw();
-        }
+        (this.effect as VignetteEffect).radius = value;
+        setRequiresRedraw();
     }
     public function get radius():Number { return this._radius; }
     
@@ -110,11 +98,8 @@ public class VignetteFilter extends FragmentFilter
     public function set size(value:Number):void
     {
         this._size = value;
-        if (this.effect != null)
-        {
-            (this.effect as VignetteEffect).size = value;
-            setRequiresRedraw();
-        }
+        (this.effect as VignetteEffect).size = value;
+        setRequiresRedraw();
     }
     public function get size():Number { return this._size; }
     
@@ -122,11 +107,8 @@ public class VignetteFilter extends FragmentFilter
     public function set useSepia(value:Boolean):void
     {
         this._useSepia = value;
-        if (this.effect != null)
-        {
-            (this.effect as VignetteEffect).useSepia = value;
-            setRequiresRedraw();
-        }
+        (this.effect as VignetteEffect).useSepia = value;
+        setRequiresRedraw();
     }
     public function get useSepia():Boolean { return this._useSepia; }
     
