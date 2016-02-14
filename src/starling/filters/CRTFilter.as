@@ -44,6 +44,13 @@ public class CRTFilter extends FragmentFilter implements IAnimatable
         this.autoUpdate = autoUpdate;
     }
     
+    /** Dispose */
+    override public function dispose():void 
+    {
+        Starling.juggler.remove(this);
+        super.dispose();
+    }
+    
     /** Auto Update */
     public function set autoUpdate(value:Boolean)
     {
@@ -170,7 +177,7 @@ class CRTEffect extends BaseFilterEffect
                 mul ft0.xy, ft0.ww, ft0.xy
                 add ft0.xy, ft0.xy, v0.xy
                 
-                tex ft2, ft0.xy, fs0<2d, clamp, nearest, mipnone>
+                tex ft2, ft0.xy, fs0<2d, wrap, nearest, mipnone>
                 
                 sge ft3.x, ft0.x, fc0.x
                 sge ft3.y, ft0.y, fc0.x
