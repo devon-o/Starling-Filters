@@ -20,7 +20,7 @@
  *	THE SOFTWARE.
  */
 
-package starling.filters 
+package starling.effects 
 {
 
 import starling.rendering.FilterEffect;
