@@ -34,26 +34,35 @@ import starling.rendering.FilterEffect;
 public class CrossProcessingFilter extends FragmentFilter
 {
     
+    private var _amount:Number;
+    
     /** Create a new CrossProcessing Filter */
-    public function CrossProcessingFilter() 
+    public function CrossProcessingFilter(amount:Number=1.0) 
     {
+        this._amount = amount;
         super();
     }
     
     /** Amount */
     public function set amount(value:Number):void
     {
-        (this.effect as CrossProcessEffect).amount = value;
+        this._amount = value;
+        if (this.effect == null)
+            return;
+            
+        (this.effect as CrossProcessEffect).amount = this._amount;
         setRequiresRedraw();
     }
-    public function get amount():Number { return (this.effect as CrossProcessEffect).amount; }
+    public function get amount():Number { return this._amount; }
     
     // Implementation
     
     /** Create effect */
     override protected function createEffect():FilterEffect 
     {
-        return new CrossProcessEffect();
+        var e:CrossProcessEffect = new CrossProcessEffect();
+        e.amount=this._amount;
+        return e;
     }
     
 }

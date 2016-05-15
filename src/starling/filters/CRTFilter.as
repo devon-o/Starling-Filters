@@ -53,7 +53,7 @@ public class CRTFilter extends FragmentFilter
     }
     
     /** Auto Update */
-    public function set autoUpdate(value:Boolean)
+    public function set autoUpdate(value:Boolean):void
     {
         if (value) 
             addEventListener(Event.ENTER_FRAME, onUpdate);
