@@ -1,13 +1,12 @@
-Starling-Filters
-================
+# Starling-Filters
 
-A collection of filters for use with the Starling AS3 framework.
+A collection of filters for use with the [Starling AS3 framework](https://github.com/Gamua/Starling-Framework/).
 
+The `master` branch contains filters for use with `Starling 2.0`.
 
-
-Demo App (does not include all filters):
-=======================================
-
-http://onebyonedesign.com/flash/starling/filters/demo/
+For `Starling 1.x`, use filters from `archive` branch.
 
 
+### Demo App (does not include all filters):
+
+[Demo](http://onebyonedesign.com/flash/starling/filters/demo/)
