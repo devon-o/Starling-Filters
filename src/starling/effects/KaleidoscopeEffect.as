@@ -135,9 +135,7 @@ public class KaleidoscopeEffect extends BaseFilterEffect
                 add ft6.y, ft6.y, ft3.x
                 
                 mul ft6.xy, ft6.xy, fc3.z
-                
-                tex oc, ft6.xy, fs0<2d, clamp, nearest, mipnone>
-            ]]>
+            ]]>+tex("oc", "ft6.xy", 0, this.texture);
     }
     
     /** Before Draw */

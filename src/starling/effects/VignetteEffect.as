@@ -68,8 +68,9 @@ public class VignetteEffect extends BaseFilterEffect
                 sat ft5.z, ft5.z
                 min ft5.z, ft5.z, fc0.z
                 sub ft6, fc0.z, ft5.z
-                tex ft1, v0, fs0<2d, clamp, linear, mipnone>
-                
+            ]]>
+            +tex("ft1", "v0", 0, this.texture)+
+            <![CDATA[
                 // sepia  
                 dp3 ft2.x, ft1, fc2
                 dp3 ft2.y, ft1, fc3

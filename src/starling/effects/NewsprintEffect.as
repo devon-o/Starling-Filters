@@ -42,8 +42,8 @@ public class NewsprintEffect extends BaseFilterEffect
     override protected function createShaders():void 
     {
         this.fragmentShader = 
+        tex("ft0", "v0", 0, this.texture)+
         <![CDATA[
-            tex ft0, v0, fs0<2d, clamp, nearest, nomip>
             mov ft1, fc0.w
             add ft1.x, ft0.x, ft0.y
             add ft1.x, ft1.x, ft0.z
@@ -72,6 +72,7 @@ public class NewsprintEffect extends BaseFilterEffect
             mul ft3, ft3, fc1.x 
             add ft2, ft2, ft3
             mov ft2.w, ft0.w
+            mul ft2.xyz, ft2.xyz, ft2.www
             mov oc, ft2
         ]]>;
     }

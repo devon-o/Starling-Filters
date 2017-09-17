@@ -117,9 +117,10 @@ public class FlashlightEffect extends BaseFilterEffect
             
             // lightcolor
             mul ft0.xyz, ft0.xyz, fc2.xyz
-            
+        ]]>
             // Sample
-            tex ft6, v0.xy, fs0<2d, clamp, linear, mipnone>
+            +tex("ft6", "v0.xy", 0, this.texture)+
+        <![CDATA[
             mul ft6.xyz, ft6.xyz, ft0.xyz
             mov oc, ft6
         ]]>

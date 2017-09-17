@@ -55,9 +55,9 @@ public class CRTEffect extends BaseFilterEffect
                 mul ft0.w, ft0.w, ft0.z
                 mul ft0.xy, ft0.ww, ft0.xy
                 add ft0.xy, ft0.xy, v0.xy
-                
-                tex ft2, ft0.xy, fs0<2d, wrap, nearest, mipnone>
-                
+            ]]>
+                +tex("ft2", "ft0.xy", 0, this.texture)+
+            <![CDATA[
                 sge ft3.x, ft0.x, fc0.x
                 sge ft3.y, ft0.y, fc0.x
                 slt ft3.z, ft0.x, fc0.w
@@ -115,6 +115,7 @@ public class CRTEffect extends BaseFilterEffect
                 
                 // set output alpha to 1 or 0 depending on multiplied out color (solid black will have 0 alpha)
                 sge ft0.w, ft1.x, fc5.w
+                mul ft0.xyz, ft0.xyz, ft0.www
                 mov oc, ft0
             ]]>
     }

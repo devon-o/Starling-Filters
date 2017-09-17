@@ -48,8 +48,8 @@ package starling.effects
         override protected function createShaders():void 
         {
             this.fragmentShader = 
+                tex("ft1", "v0", 0, this.texture)+
             <![CDATA[
-                tex ft1, v0, fs0<2d, clamp, linear, mipnone>
                 sub ft2.x, v0.x, fc0.x
                 mul ft2.x, ft2.x, ft2.x
                 div ft2.x, ft2.x, fc1.w

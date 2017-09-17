@@ -55,10 +55,8 @@ public class CrossProcessEffect extends BaseFilterEffect
     override protected function createShaders():void 
     {
         this.fragmentShader = 
+            tex("ft0", "v0", 0, this.texture)+
         <![CDATA[
-            
-            tex ft0, v0, fs0<2d, clamp, linear, mipnone>
-            
             mov ft1.y, fc0.y
             
             // r
