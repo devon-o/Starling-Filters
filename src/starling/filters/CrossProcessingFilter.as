@@ -47,11 +47,7 @@ public class CrossProcessingFilter extends FragmentFilter
     public function set amount(value:Number):void
     {
         this._amount = value;
-        if (this.effect == null)
-            return;
-            
-        (this.effect as CrossProcessEffect).amount = this._amount;
-        setRequiresRedraw();
+        FilterUtil.applyEffectProperty("amount", this._amount, this.effect, setRequiresRedraw);
     }
     public function get amount():Number { return this._amount; }
     
