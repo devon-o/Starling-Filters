@@ -35,6 +35,7 @@ package starling.effects
         public var _ticker:Number;
         public var _frequency:Number;
         public var _isHorizontal:Boolean;
+        public var _alpha:Number;
         
         public function SineWaveEffect() 
         {}
@@ -57,7 +58,12 @@ package starling.effects
                 // vertical
                 mul ft2.x, ft1.x, fc1.y
                 add ft0.y, ft0.y, ft2.x
-            ]]> + tex("oc", "ft0", 0, this.texture);
+            ]]>+tex("ft3", "ft0", 0, this.texture)+
+            <![CDATA[
+                // multiply by alpha
+                mul ft3, ft3, fc1.z
+                mov oc, ft3
+            ]]>;
         }
         
         /** Before draw */
@@ -71,6 +77,7 @@ package starling.effects
             
             this.fc1[0] = int(this._isHorizontal);
             this.fc1[1] = int(!this._isHorizontal);
+            this.fc1[2] = this._alpha;
             
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 0, this.fc0, 1);
             context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, 1, this.fc1, 1);

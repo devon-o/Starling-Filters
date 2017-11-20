@@ -38,6 +38,7 @@ package starling.filters
         private var _ticker:Number;
         private var _frequency:Number;
         private var _isHorizontal:Boolean=true;
+        private var _alpha:Number=1.0;
         
         /**
          * Create a new SineWaveFilter
@@ -78,6 +79,14 @@ package starling.filters
             FilterUtil.applyEffectProperty("_ticker", this._ticker, this.effect, setRequiresRedraw);
         }
         
+        /** Alpha value of effect (0 - 1) Default = 1.0 */
+        public function get alpha():Number { return this._alpha; }
+        public function set alpha(value:Number):void 
+        { 
+            this._alpha = value;
+            FilterUtil.applyEffectProperty("_alpha", this._alpha, this.effect, setRequiresRedraw);
+        }
+        
         /** Is Wave horizontal or not */
         public function get isHorizontal():Boolean { return this._isHorizontal; }
         public function set isHorizontal(value:Boolean):void 
@@ -93,6 +102,7 @@ package starling.filters
             effect._amplitude = this._amplitude;
             effect._frequency = this._frequency;
             effect._ticker = this._ticker;
+            effect._alpha = this._alpha;
             effect._isHorizontal = this._isHorizontal;
             return effect;
         }
