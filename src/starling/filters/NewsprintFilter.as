@@ -71,7 +71,7 @@ public class NewsprintFilter extends FragmentFilter
     /** Angle */
     public function set angle(value:Number):void
     {
-        this._angle = angle;
+        this._angle = value;
         (this.effect as NewsprintEffect).angle = value;
         setRequiresRedraw();
     }
